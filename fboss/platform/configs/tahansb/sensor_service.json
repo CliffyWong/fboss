@@ -364,7 +364,7 @@
             "maxAlarmVal": 0,
             "upperCriticalVal": 0
           },
-          "compute": "@/1000.0"
+          "compute": "59.968*(@/1000.0)^3-326.66*(@/1000.0)^2+650.33*(@/1000.0)-420.1"
         },
         {
           "name": "MCB_U1_ADC128D818_ORV3_GND_NTC_P2",
@@ -374,7 +374,7 @@
             "maxAlarmVal": 0,
             "upperCriticalVal": 0
           },
-          "compute": "@/1000.0"
+          "compute": "59.968*(@/1000.0)^3-326.66*(@/1000.0)^2+650.33*(@/1000.0)-420.1"
         },
         {
           "name": "MCB_U61_MCB_COME_INLET_TSENSOR",

@@ -22,12 +22,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -4,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 97.0,
-        "posHysteresis": 0.0,
-        "negHysteresis": 8.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -37,12 +37,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 105.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -52,12 +52,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 105.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -67,12 +67,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -82,12 +82,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -97,12 +97,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -112,12 +112,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -127,12 +127,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -142,12 +142,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -157,12 +157,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -172,12 +172,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -187,12 +187,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -202,12 +202,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -217,12 +217,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -232,12 +232,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -247,12 +247,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -262,12 +262,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -277,12 +277,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -292,12 +292,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -307,12 +307,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -322,12 +322,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -337,12 +337,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {
@@ -352,12 +352,12 @@
       },
       "pwmCalcType": "SENSOR_PWM_CALC_TYPE_INCREMENTAL_PID",
       "pidSetting": {
-        "kp": -8,
-        "ki": -0.06,
+        "kp": 2,
+        "ki": 0.6,
         "kd": 0,
         "setPoint": 116.0,
-        "posHysteresis": 5.0,
-        "negHysteresis": 0.0
+        "posHysteresis": 3.0,
+        "negHysteresis": 3.0
       }
     },
     {

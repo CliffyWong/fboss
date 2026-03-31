@@ -1,7 +1,11 @@
 // Copyright (c) Meta Platforms, Inc. and affiliates.
 
 #include "fboss/platform/bsp_tests/RuntimeConfigBuilder.h"
+#include "fboss/platform/bsp_tests/utils/CdevUtils.h"
+#include "fboss/platform/bsp_tests/utils/I2CUtils.h"
 #include "fboss/platform/platform_manager/Utils.h"
+#include "fboss/platform/weutil/FbossEepromInterface.h"
+#include "fboss/platform/weutil/IoctlSmbusEepromReader.h"
 
 #include <folly/logging/xlog.h>
 #include <thrift/lib/cpp2/protocol/Serializer.h>
@@ -116,10 +120,11 @@ RuntimeConfigBuilder::findAdapter(
   return &adapters.at(pmName);
 }
 
-void RuntimeConfigBuilder::processIdpromDevices(
+std::map<std::string, PmUnitVersion> RuntimeConfigBuilder::processIdpromDevices(
     const PlatformConfig& pmConfig,
     std::map<std::string, facebook::fboss::platform::bsp_tests::I2CAdapter>&
         adapters) {
+  std::map<std::string, PmUnitVersion> pmUnitVersions;
   // Process idprom devices from the slotTypeConfigs section
   for (const auto& [slotType, slotTypeConfig] : *pmConfig.slotTypeConfigs()) {
     // Skip if this slotType doesn't have an idpromConfig
@@ -163,6 +168,17 @@ void RuntimeConfigBuilder::processIdpromDevices(
         try {
           auto adapter = findAdapter(adapters, adapterPmUnit, adapterName);
           adapter->i2cDevices()->push_back(i2cDevice);
+          // Get the PM unit version info from the IDPROM and store it
+          auto pmUnitVersion = getPmunitVersions(
+              pmConfig.platformName().value(),
+              pmUnitName,
+              *adapter,
+              i2cDevice,
+              idpromConfig);
+          if (pmUnitVersion.has_value()) {
+            pmUnitVersions.emplace(pmUnitName, *pmUnitVersion);
+          }
+
         } catch (const std::exception& ex) {
           XLOG(WARNING) << "Could not find adapter " << adapterPmUnit << "."
                         << adapterName << " for IDPROM device: " << ex.what();
@@ -173,6 +189,153 @@ void RuntimeConfigBuilder::processIdpromDevices(
       }
     }
   }
+
+  return pmUnitVersions;
+}
+
+std::optional<std::string> RuntimeConfigBuilder::createEepromPathIoctl(
+    const IdpromConfig& idpromConfig,
+    const uint16_t i2cBusNum) {
+  std::string eepromDir = "/tmp/";
+  std::string eepromName = "SCM_EEPROM";
+  std::string eepromPath = eepromDir + eepromName;
+  try {
+    IoctlSmbusEepromReader::readEeprom(
+        eepromDir,
+        eepromName,
+        0,
+        std::stoi(*idpromConfig.address(), nullptr, 16),
+        i2cBusNum);
+
+  } catch (const std::exception& e) {
+    XLOG(WARNING) << fmt::format(
+        "Could not read EEPROM using ioctl method: {}", e.what());
+    return std::nullopt;
+  }
+  return eepromPath;
+}
+
+std::optional<std::string> RuntimeConfigBuilder::createEepromPathI2C(
+    const IdpromConfig& idpromConfig,
+    const I2CDevice& i2cDevice,
+    const uint16_t i2cBusNum) {
+  if (!I2CUtils::isI2CDeviceCreated(i2cDevice, i2cBusNum)) {
+    if (!I2CUtils::createI2CDevice(i2cDevice, i2cBusNum)) {
+      XLOG(INFO) << fmt::format(
+          "Create idprom {} failure", *i2cDevice.pmName());
+      return std::nullopt;
+    }
+  }
+
+  std::string eepromPath = fmt::format(
+      "{}/eeprom", I2CUtils::getI2CDir(i2cBusNum, *i2cDevice.address()));
+
+  // Check if the device directory exists
+  if (!std::filesystem::exists(eepromPath)) {
+    XLOG(INFO) << "Device " << *i2cDevice.address() << " on bus " << i2cBusNum
+               << " not found: device directory does not exist";
+    return std::nullopt;
+  }
+
+  return eepromPath;
+}
+
+std::optional<PmUnitVersion> RuntimeConfigBuilder::getPmunitVersions(
+    const std::string& platformName,
+    const std::string pmUnitName,
+    const I2CAdapter& adapter,
+    const I2CDevice& i2cDevice,
+    const IdpromConfig& idpromConfig) {
+  int adapterId = 1;
+  I2CAdapterCreationResult result;
+  try {
+    result = I2CUtils::createI2CAdapter(adapter, adapterId);
+
+  } catch (const std::exception& e) {
+    XLOG(WARN) << fmt::format(
+        "Failed to create I2C adapter for {}: {}", pmUnitName, e.what());
+    return std::nullopt;
+  }
+
+  int busNum = result.buses.at(*i2cDevice.channel()).busNum;
+  PmUnitVersion version;
+
+  auto cleanupCreatedAdapters = [&result]() {
+    for (auto& createdAdapter : result.createdAdapters) {
+      I2CUtils::deleteI2CAdapter(createdAdapter.adapter, createdAdapter.id);
+    }
+  };
+
+  std::optional<std::string> eepromPath;
+  if ((platformName == "MERU800BFA" || platformName == "MERU800BIA" ||
+       platformName == "ICECUBE800BANW" ||
+       platformName == "BLACKWOLF800BANW") &&
+      (!(idpromConfig.busName()->starts_with("INCOMING")) &&
+       *idpromConfig.address() == "0x50")) {
+    eepromPath = createEepromPathIoctl(idpromConfig, busNum);
+
+  } else {
+    eepromPath = createEepromPathI2C(idpromConfig, i2cDevice, busNum);
+  }
+
+  if (!eepromPath.has_value()) {
+    XLOG(WARN) << fmt::format(
+        "Could not create EEPROM path for {}", pmUnitName);
+    // Clean up created I2C adapter
+    cleanupCreatedAdapters();
+    return std::nullopt;
+  }
+
+  FbossEepromInterface eepromContent(
+      eepromPath.value(), *idpromConfig.offset());
+
+  version.productProductionState() =
+      std::stoi(eepromContent.getProductionState());
+  version.productVersion() = std::stoi(eepromContent.getProductionSubState());
+  version.productSubVersion() = std::stoi(eepromContent.getVariantVersion());
+
+  XLOG(INFO) << fmt::format(
+      "Idprom of {} {} : {} {} {}",
+      pmUnitName,
+      eepromPath.value(),
+      *version.productProductionState(),
+      *version.productVersion(),
+      *version.productSubVersion());
+
+  // Clean up created I2C adapter
+  cleanupCreatedAdapters();
+
+  return version;
+}
+
+std::map<std::string, PmUnitConfig> RuntimeConfigBuilder::resolvePmUnitConfigs(
+    const PlatformConfig& pmConfig,
+    std::map<std::string, PmUnitVersion> pmUnitVersions) {
+  std::map<std::string, PmUnitConfig> resolvedPmunitConfigs;
+  for (const auto& [unitName, pmUnit] : *pmConfig.pmUnitConfigs()) {
+    bool chooseVersionedConfig = false;
+    if (pmConfig.versionedPmUnitConfigs()->contains(unitName) &&
+        pmUnitVersions.contains(unitName)) {
+      auto productSubVersion = *pmUnitVersions.at(unitName).productSubVersion();
+      for (const auto& versionedPmUnitConfig :
+           pmConfig.versionedPmUnitConfigs()->at(unitName)) {
+        if (*versionedPmUnitConfig.productSubVersion() == productSubVersion) {
+          XLOG(INFO) << fmt::format(
+              "Resolved PmUnitConfig of {} with ProductSubVersion {}",
+              unitName,
+              productSubVersion);
+          chooseVersionedConfig = true;
+          resolvedPmunitConfigs.emplace(
+              unitName, *versionedPmUnitConfig.pmUnitConfig());
+        }
+      }
+    }
+    if (!chooseVersionedConfig) {
+      XLOG(INFO) << fmt::format("No Resolved PmUnitConfig of {} ", unitName);
+      resolvedPmunitConfigs.emplace(unitName, pmUnit);
+    }
+  }
+  return resolvedPmunitConfigs;
 }
 
 RuntimeConfig RuntimeConfigBuilder::buildRuntimeConfig(
@@ -342,10 +505,15 @@ RuntimeConfig RuntimeConfigBuilder::buildRuntimeConfig(
     }
   }
 
+  // Process idprom devices from the slotTypeConfigs section
+  auto pmUnitVersionList = processIdpromDevices(pmConfig, i2cAdapters);
+
+  auto resolvedPmConfig = resolvePmUnitConfigs(pmConfig, pmUnitVersionList);
+
   // Add each i2cDevice to the actual adapter that is is attached to.
   // Traverses platform_manager config to find the adapter if "INCOMING"
   // bus is used.
-  for (const auto& [pmUnitName, pmUnit] : *pmConfig.pmUnitConfigs()) {
+  for (const auto& [pmUnitName, pmUnit] : resolvedPmConfig) {
     for (const auto& pmDev : *pmUnit.i2cDeviceConfigs()) {
       auto [adapterPmUnit, adapterName, channel] = getActualAdapter(
           pmConfig, pmUnitName, *pmDev.busName(), *pmUnit.pluggedInSlotType());
@@ -374,9 +542,6 @@ RuntimeConfig RuntimeConfigBuilder::buildRuntimeConfig(
     }
   }
 
-  // Process idprom devices from the slotTypeConfigs section
-  processIdpromDevices(pmConfig, i2cAdapters);
-
   config.devices() = devices;
   config.i2cAdapters() = i2cAdapters;
   config.expectedErrors() = *testConfig.expectedErrors();
@@ -398,6 +563,11 @@ RuntimeConfigBuilder::getActualAdapter(
     const std::string& slotType) {
   std::string busName = sourceBusName;
   int busIdx = 0;
+
+  if (busName.find("CPU_BUS") == 0) {
+    // Bus name is CPU BUS, so it's the actual bus name
+    return std::make_tuple(sourceUnitName, sourceBusName, 0);
+  }
 
   size_t atPos = sourceBusName.find('@');
   if (atPos != std::string::npos) {

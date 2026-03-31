@@ -65,6 +65,19 @@ std::string I2CUtils::findPciDirectory(PciDeviceInfo pci) {
           *pci.subSystemDeviceId()));
 }
 
+std::set<I2CBus> I2CUtils::getCPUI2CBusNums(const I2CAdapter& adapter) {
+  auto cpuBusNums =
+      platform_manager::I2cExplorer().getBusNums({*adapter.busName()});
+  std::set<I2CBus> busNums;
+  for (const auto& [busName, busNum] : cpuBusNums) {
+    I2CBus bus;
+    bus.busNum = busNum;
+    bus.name = busName;
+    busNums.insert(bus);
+  }
+  return busNums;
+}
+
 // Creates an adapter AND its parents e.g. a mux adapter that
 // depends on a parent PCI adapter
 I2CAdapterCreationResult I2CUtils::createI2CAdapter(
@@ -75,9 +88,10 @@ I2CAdapterCreationResult I2CUtils::createI2CAdapter(
   // TODO: Check if it already exists
   if (*adapter.isCpuAdapter()) {
     // No need to create, just return the bus
-    auto existingBuses = findI2CBuses();
+    auto existingBuses = getCPUI2CBusNums(adapter);
     for (const auto& bus : existingBuses) {
       if (bus.name == *adapter.busName()) {
+        XLOG(INFO) << "CPU adapter :" << *adapter.busName() << " found";
         result.buses = {{0, bus}};
         // CPU adapters are not created, so don't add to createdAdapters
         return result;
@@ -170,6 +184,33 @@ I2CAdapterCreationResult I2CUtils::createI2CAdapter(
   }
 }
 
+void I2CUtils::deleteI2CAdapter(const I2CAdapter& adapter, int32_t id) {
+  if (*adapter.isCpuAdapter()) {
+    XLOG(INFO) << "CPU adapter " << *adapter.busName()
+               << " does not require deletion";
+    return;
+  }
+
+  if (adapter.pciAdapterInfo().has_value()) {
+    try {
+      CdevUtils::deleteDevice(
+          *adapter.pciAdapterInfo()->pciInfo(),
+          *adapter.pciAdapterInfo()->auxData(),
+          id);
+      XLOG(INFO) << "Deleted PCI adapter :" << *adapter.pmName()
+                 << " with id: " << id;
+    } catch (const std::exception& e) {
+      XLOG(ERR) << "Failed to delete PCI adapter " << *adapter.pmName() << ": "
+                << e.what();
+    }
+    return;
+  }
+
+  XLOG(INFO) << "Adapter " << *adapter.busName()
+             << " does not require deletion";
+  return;
+}
+
 std::string I2CUtils::getBusNameFromNum(int busNum) {
   auto busName = PlatformFsUtils().getStringFileContent(
       fmt::format("/sys/bus/i2c/devices/i2c-{}/name", busNum));
@@ -221,6 +262,7 @@ I2CBus I2CUtils::parseI2CDetectLine(const std::string& line) {
   std::string part;
 
   while (std::getline(iss, part, '\t')) {
+    RE2::Replace(&part, R"(^\s+|\s+$)", "");
     parts.push_back(part);
   }
 
@@ -252,7 +294,8 @@ bool I2CUtils::detectI2CDevice(int bus, const std::string& hexAddr) {
       auto [exitCode, output] =
           PlatformUtils().execCommand(folly::join(" ", cmd));
       if (exitCode != 0) {
-        XLOG(WARN) << "i2cdetect command failed with exit code " << exitCode;
+        XLOG(WARN) << "i2cdetect command failed : " << (folly::join(" ", cmd))
+                   << " with exit code " << exitCode;
         continue; // Try next option if command failed
       }
 
@@ -382,6 +425,48 @@ void I2CUtils::i2cSet(
   }
 }
 
+bool I2CUtils::isI2CDeviceCreated(const I2CDevice& device, int bus) {
+  // Verify the device exists
+  std::string devDir = "/sys/bus/i2c/devices";
+  std::string busPath = fmt::format("{}/i2c-{}", devDir, bus);
+
+  // Check if the bus directory exists
+  if (!std::filesystem::exists(busPath)) {
+    XLOG(INFO) << "Device " << *device.address() << " on bus " << bus
+               << " not found: bus directory does not exist";
+    return false;
+  }
+
+  std::string devicePath = getI2CDir(bus, *device.address());
+  if (!std::filesystem::exists(devicePath)) {
+    XLOG(INFO) << "Device " << *device.address() << " on bus " << bus
+               << " not found: device directory does not exist";
+    return false;
+  }
+
+  // Read the name file and verify it is correct
+  std::string namePath = fmt::format("{}/name", devicePath);
+  std::ifstream nameFile(namePath);
+  if (!nameFile.is_open()) {
+    XLOG(INFO) << "Failed to open name file for device " << *device.address()
+               << " on bus " << bus;
+    return false;
+  }
+
+  std::string name;
+  std::getline(nameFile, name);
+  name.erase(name.find_last_not_of("\n\r") + 1); // Trim trailing newlines
+
+  if (name != *device.deviceName()) {
+    XLOG(INFO) << "Device " << *device.address() << " on bus " << bus
+               << ": wrong device name: expected '" << *device.deviceName()
+               << "' got '" << name << "'";
+    return false;
+  }
+
+  return true;
+}
+
 bool I2CUtils::createI2CDevice(const I2CDevice& device, int bus) {
   try {
     // Create the command to create the I2C device
@@ -398,52 +483,8 @@ bool I2CUtils::createI2CDevice(const I2CDevice& device, int bus) {
       return false;
     }
 
-    // Verify the device exists
-    std::string devDir = "/sys/bus/i2c/devices";
-    std::string busPath = fmt::format("{}/i2c-{}", devDir, bus);
+    return isI2CDeviceCreated(device, bus);
 
-    // Check if the bus directory exists
-    if (!std::filesystem::exists(busPath)) {
-      XLOG(ERR) << "Device " << *device.address() << " on bus " << bus
-                << " not found: bus directory does not exist";
-      return false;
-    }
-
-    // Get the address suffix (remove "0x" prefix and pad with zeros)
-    std::string addrSuffix = (*device.address()).substr(2);
-    while (addrSuffix.length() < 4) {
-      addrSuffix = "0" + addrSuffix;
-    }
-
-    // Check if the device directory exists
-    std::string devicePath = fmt::format("{}/{}-{}", devDir, bus, addrSuffix);
-    if (!std::filesystem::exists(devicePath)) {
-      XLOG(ERR) << "Device " << *device.address() << " on bus " << bus
-                << " not found: device directory does not exist";
-      return false;
-    }
-
-    // Read the name file and verify it is correct
-    std::string namePath = fmt::format("{}/name", devicePath);
-    std::ifstream nameFile(namePath);
-    if (!nameFile.is_open()) {
-      XLOG(ERR) << "Failed to open name file for device " << *device.address()
-                << " on bus " << bus;
-      return false;
-    }
-
-    std::string name;
-    std::getline(nameFile, name);
-    name.erase(name.find_last_not_of("\n\r") + 1); // Trim trailing newlines
-
-    if (name != *device.deviceName()) {
-      XLOG(ERR) << "Device " << *device.address() << " on bus " << bus
-                << ": wrong device name: expected '" << *device.deviceName()
-                << "' got '" << name << "'";
-      return false;
-    }
-
-    return true;
   } catch (const std::exception& e) {
     XLOG(ERR) << "Failed to create device " << *device.deviceName()
               << ", error: " << e.what();
@@ -454,10 +495,10 @@ bool I2CUtils::createI2CDevice(const I2CDevice& device, int bus) {
 std::string I2CUtils::getI2CDir(int busNum, const std::string& address) {
   // Get the address suffix (remove "0x" prefix and pad with zeros)
   std::string addrSuffix = address.substr(2);
-  while (addrSuffix.length() < 4) {
+  /*while (addrSuffix.length() < 4) {
     addrSuffix = fmt::format("0{}", addrSuffix);
-  }
-  return fmt::format("/sys/bus/i2c/devices/{}-{}/", busNum, addrSuffix);
+  }*/
+  return fmt::format("/sys/bus/i2c/devices/{}-00{}", busNum, addrSuffix);
 }
 
 } // namespace facebook::fboss::platform::bsp_tests

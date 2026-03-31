@@ -60,11 +60,15 @@ target_link_libraries(bsp_test_environment
   ${GTEST}
   bsp_tests_config_cpp2
   bsp_tests_runtime_config_cpp2
+  bsp_test_utils
   platform_config_lib
   platform_name_lib
   platform_manager_pkg_manager
   platform_manager_config_cpp2
   platform_manager_utils
+  weutil_eeprom_contents_cpp2
+  weutil_fboss_eeprom_interface
+  ioctl_smbus_eeprom_reader
   Folly::folly
   FBThrift::thriftcpp2
 )
@@ -89,6 +93,9 @@ target_link_libraries(bsp_tests
   bsp_test_utils
   platform_manager_i2c_explorer
   platform_manager_config_cpp2
+  weutil_eeprom_contents_cpp2
+  ioctl_smbus_eeprom_reader
+  weutil_fboss_eeprom_interface
   Folly::folly
   ${GFLAGS}
 )

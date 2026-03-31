@@ -35,10 +35,13 @@ int main(int argc, char** argv) {
   helpers::init(&argc, &argv);
 
   ::testing::UnitTest::GetInstance()->listeners().Append(new StressTestFilter);
-  ::testing::AddGlobalTestEnvironment(BspTestEnvironment::GetInstance());
+  //::testing::AddGlobalTestEnvironment(BspTestEnvironment::GetInstance());
 
-  auto ret = RUN_ALL_TESTS();
   auto env = BspTestEnvironment::GetInstance();
+  env->SetUp();
+  auto ret = RUN_ALL_TESTS();
+  // auto env = BspTestEnvironment::GetInstance();
   env->printAllRecordedErrors();
+
   return ret;
 }

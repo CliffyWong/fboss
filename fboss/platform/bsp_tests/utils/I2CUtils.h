@@ -64,6 +64,8 @@ class I2CUtils {
   // Find all I2C buses in the system
   static std::set<I2CBus> findI2CBuses();
 
+  static std::set<I2CBus> getCPUI2CBusNums(const I2CAdapter& adapter);
+
   // Parse a line from i2cdetect -l output
   static I2CBus parseI2CDetectLine(const std::string& line);
 
@@ -91,8 +93,13 @@ class I2CUtils {
       const std::string& reg,
       const std::string& data);
 
+  // Check an I2C device created or not
+  static bool isI2CDeviceCreated(const I2CDevice& device, int bus);
+
   // Create an I2C device
   static bool createI2CDevice(const I2CDevice& device, int bus);
+
+  static void deleteI2CAdapter(const I2CAdapter& adapter, int32_t id);
 
   static std::string
   findI2cDir(const std::string& pciDir, const I2CAdapter& adapter, int id);

@@ -189,19 +189,23 @@ TEST_F(I2CTest, I2CAdapterDevicesExist) {
       registerAdaptersForCleanup(result.createdAdapters);
       id += result.createdAdapters.size();
 
-      // Check each device is detectable
       for (const auto& device : *adapter.i2cDevices()) {
         auto reason = getExpectedErrorReason(
             *device.pmName(), ExpectedErrorType::I2C_NOT_DETECTABLE);
-        if (reason) {
-          recordExpectedError(*device.pmName(), *reason);
-          XLOG(INFO) << "Skipping I2C device " << *device.pmName() << " ";
-          continue;
-        }
 
         int busNum = result.buses.at(*device.channel()).busNum;
 
-        EXPECT_TRUE(I2CUtils::detectI2CDevice(busNum, *device.address()))
+        auto deviceDetected =
+            I2CUtils::detectI2CDevice(busNum, *device.address());
+
+        if (!deviceDetected && reason.has_value()) {
+          recordExpectedError(*device.pmName(), *reason);
+          XLOG(INFO) << "Skipping I2C device " << *device.pmName()
+                     << " due to expected error: " << *reason;
+          continue;
+        }
+
+        EXPECT_TRUE(deviceDetected)
             << "I2C device " << *device.pmName() << " " << *device.address()
             << " not detected on bus " << busNum << " " << *adapter.pmName();
       }

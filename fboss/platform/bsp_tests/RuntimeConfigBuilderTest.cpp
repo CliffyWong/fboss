@@ -14,6 +14,25 @@ namespace facebook::fboss::platform::bsp_tests {
 class TestableRuntimeConfigBuilder : public RuntimeConfigBuilder {
  public:
   using RuntimeConfigBuilder::getActualAdapter;
+
+  // Override getPmunitVersions for testing purposes
+  std::optional<PmUnitVersion> getPmunitVersions(
+      const std::string& platformName,
+      const std::string pmUnitName,
+      const I2CAdapter& adapter,
+      const I2CDevice& device,
+      const IdpromConfig& idpromConfig) override {
+    // Provide a mock or test-specific implementation here
+    PmUnitVersion version;
+    if (pmUnitName == "NETLAKE" && isVersionedPMUnit_) {
+      version.productProductionState() = 4;
+      version.productVersion() = 2;
+      version.productSubVersion() = 2;
+    }
+    return version;
+  }
+
+  bool isVersionedPMUnit_ = false;
 };
 
 // Test fixture for RuntimeConfigBuilder tests
@@ -288,6 +307,46 @@ TEST_F(RuntimeConfigBuilderTest, BuildConfigsForAllRealPlatforms) {
   }
 }
 
+TEST_F(RuntimeConfigBuilderTest, BuildConfigsForPlatformsWithVersionedCome) {
+  std::vector<std::string> realPlatforms = {
+      "montblanc",
+      "janga800bic",
+      "tahan800bc",
+      "icecube",
+      "tahansb800bc",
+  };
+
+  for (const auto& platformName : realPlatforms) {
+    SCOPED_TRACE("Testing platform: " + platformName);
+
+    // Load platform configuration for this platform
+    platform_manager::PlatformConfig platformConfig;
+    try {
+      std::string configJson =
+          ConfigLib().getPlatformManagerConfig(platformName);
+      apache::thrift::SimpleJSONSerializer::deserialize<
+          platform_manager::PlatformConfig>(configJson, platformConfig);
+    } catch (const std::exception& e) {
+      FAIL() << "Failed to load platform config for " << platformName << ": "
+             << e.what();
+    }
+
+    // Create a minimal BspTestsConfig for this platform
+    bsp_tests::BspTestsConfig testConfig;
+    testConfig.testData() = std::map<std::string, DeviceTestData>();
+
+    BspKmodsFile kmods;
+
+    // Attempt to build the runtime config
+    builder_->isVersionedPMUnit_ = true;
+    RuntimeConfig runtimeConfig;
+    EXPECT_NO_THROW({
+      runtimeConfig = builder_->buildRuntimeConfig(
+          testConfig, platformConfig, kmods, platformName);
+    }) << "Failed to build runtime config for platform: "
+       << platformName;
+  }
+}
 // Test that hyphens in kmod names are replaced with underscores
 TEST_F(RuntimeConfigBuilderTest, KmodNamesHyphenReplacement) {
   // Create a minimal BspTestsConfig

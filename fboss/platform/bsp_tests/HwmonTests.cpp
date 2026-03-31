@@ -29,6 +29,21 @@ class HwmonTest : public BspTest {
     return std::nullopt;
   }
 
+  std::vector<std::vector<std::string>> getExpectedFeaturesList(
+      const HwmonTestData& hwmonTestData) {
+    std::vector<std::vector<std::string>> expectedFeaturesList;
+    if (hwmonTestData.expectedFeatures().has_value()) {
+      expectedFeaturesList.push_back(*hwmonTestData.expectedFeatures());
+    }
+    if (hwmonTestData.expVersionedFeaturesList().has_value()) {
+      for (const auto& expectedFeatures :
+           *hwmonTestData.expVersionedFeaturesList()) {
+        expectedFeaturesList.push_back(expectedFeatures);
+      }
+    }
+    return expectedFeaturesList;
+  }
+
   std::vector<I2CAdapter> getAllAdaptersWithHwmons() {
     std::vector<I2CAdapter> adapters;
 
@@ -93,16 +108,38 @@ TEST_F(HwmonTest, HwmonSensors) {
           featureNames.push_back(feature.name);
         }
 
-        // Check that all expected features are present
-        for (const auto& feature : *hwmonTestData.expectedFeatures()) {
-          ASSERT_TRUE(
-              std::find(featureNames.begin(), featureNames.end(), feature) !=
-              featureNames.end())
-              << "Hwmon device " << busNum << "-"
-              << i2cDevice.address()->substr(2)
-              << " Expected to find sensor value: " << feature
-              << ". Got: " << fmt::format("{}", fmt::join(featureNames, ", "));
+        auto expectedFeaturesList = getExpectedFeaturesList(hwmonTestData);
+        XLOG(INFO) << "I2C device :: " << *i2cDevice.deviceName()
+                   << " sensor's number: " << featureNames.size()
+                   << "expected featurelist number: "
+                   << expectedFeaturesList.size();
+
+        bool foundMatchingFeatureSet = false;
+        // Check that at least one of the expected feature sets is present
+        for (const auto& expectedFeatures : expectedFeaturesList) {
+          bool currentFeatureSetMatches = true;
+          for (const auto& expectedfeature : expectedFeatures) {
+            if (std::find(
+                    featureNames.begin(),
+                    featureNames.end(),
+                    expectedfeature) == featureNames.end()) {
+              currentFeatureSetMatches = false;
+              break;
+            }
+          }
+          if (currentFeatureSetMatches) {
+            foundMatchingFeatureSet = true;
+            break;
+          }
         }
+        ASSERT_TRUE(foundMatchingFeatureSet)
+            << "Hwmon device " << busNum << "-"
+            << i2cDevice.address()->substr(2)
+            << "I2C device :: " << *i2cDevice.deviceName()
+            << " did not match any of the expected feature sets."
+            << " Expected one of: "
+            << fmt::format("{}", fmt::join(expectedFeaturesList, ", "))
+            << ". Got: " << fmt::format("{}", fmt::join(featureNames, ", "));
       }
     } catch (const std::exception& e) {
       FAIL() << "Exception during hwmon test: " << e.what();

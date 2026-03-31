@@ -1,6 +1,101 @@
 {
+  "testData": {
+    "NETLAKE.COME_VOLTAGE_MONITOR1": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_VOLTAGE_MONITOR2": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_VOLTAGE_MONITOR3": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_VOLTAGE_MONITOR4": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_VOLTAGE_MONITOR5": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin1",
+          "iin2",
+          "iout1",
+          "iout2",
+          "vin1",
+          "vin2",
+          "vout1",
+          "vout2",
+          "pin1",
+          "pin2",
+          "pout1",
+          "pout2",
+          "temp1",
+          "temp2"
+        ],
+        "expVersionedFeaturesList": [
+          [
+            "vin",
+            "vout1",
+            "vout2",
+            "pin",
+            "pout1",
+            "pout2",
+            "iin",
+            "iout1",
+            "iout2",
+            "temp1",
+            "temp2"
+          ]
+        ]
+      }
+    }
+  },
   "expectedErrors": {
     "MINIPACK3_SCM.SCM_SENSOR": {
+      "1": ""
+    },
+    "MINIPACK3_SMB.SMB_VRM2": {
+      "1": ""
+    },
+    "MINIPACK3_SMB.SMB_VRM3": {
       "1": ""
     }
   }

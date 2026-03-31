@@ -17,6 +17,8 @@ using facebook::fboss::platform::platform_manager::FpgaIpBlockConfig;
 using facebook::fboss::platform::platform_manager::IdpromConfig;
 using facebook::fboss::platform::platform_manager::LedCtrlConfig;
 using facebook::fboss::platform::platform_manager::PlatformConfig;
+using facebook::fboss::platform::platform_manager::PmUnitConfig;
+using facebook::fboss::platform::platform_manager::PmUnitVersion;
 using facebook::fboss::platform::platform_manager::SpiMasterConfig;
 using facebook::fboss::platform::platform_manager::XcvrCtrlConfig;
 
@@ -54,10 +56,30 @@ class RuntimeConfigBuilder {
           adapters,
       const std::string& unitName,
       const std::string& scopedName);
-  void processIdpromDevices(
+  std::map<std::string, PmUnitVersion> processIdpromDevices(
       const PlatformConfig& pmConfig,
       std::map<std::string, facebook::fboss::platform::bsp_tests::I2CAdapter>&
           adapters);
+
+  virtual std::optional<PmUnitVersion> getPmunitVersions(
+      const std::string& platformName,
+      const std::string pmUnitName,
+      const I2CAdapter& adapter,
+      const I2CDevice& device,
+      const IdpromConfig& idpromConfig);
+
+  std::map<std::string, PmUnitConfig> resolvePmUnitConfigs(
+      const PlatformConfig& pmConfig,
+      std::map<std::string, PmUnitVersion> pmUnitVersions);
+
+  std::optional<std::string> createEepromPathI2C(
+      const IdpromConfig& idpromConfig,
+      const I2CDevice& i2cDevice,
+      const uint16_t i2cBusNum);
+
+  std::optional<std::string> createEepromPathIoctl(
+      const IdpromConfig& idpromConfig,
+      const uint16_t i2cBusNum);
 };
 
 } // namespace facebook::fboss::platform::bsp_tests

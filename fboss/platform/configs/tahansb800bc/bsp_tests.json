@@ -335,6 +335,93 @@
         ]
       }
     },
+    "NETLAKE.COME_HWMON1": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_HWMON2": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_HWMON3": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_HWMON4": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin",
+          "iout1",
+          "temp1",
+          "vin",
+          "vout1",
+          "pin",
+          "pout1"
+        ]
+      }
+    },
+    "NETLAKE.COME_HWMON5": {
+      "hwmonTestData": {
+        "expectedFeatures": [
+          "iin1",
+          "iin2",
+          "iout1",
+          "iout2",
+          "vin1",
+          "vin2",
+          "vout1",
+          "vout2",
+          "pin1",
+          "pin2",
+          "pout1",
+          "pout2",
+          "temp1",
+          "temp2"
+        ],
+        "expVersionedFeaturesList": [
+          [
+            "vin",
+            "vout1",
+            "vout2",
+            "pin",
+            "pout1",
+            "pout2",
+            "iin",
+            "iout1",
+            "iout2",
+            "temp1",
+            "temp2"
+          ]
+        ]
+      }
+    },
     "SMB.SMB_ASIC_VOLTAGE_0": {
       "hwmonTestData": {
         "expectedFeatures": [

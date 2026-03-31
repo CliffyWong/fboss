@@ -72,6 +72,7 @@ struct GpioLineInfo {
 
 struct HwmonTestData {
   1: list<string> expectedFeatures;
+  2: optional list<list<string>> expVersionedFeaturesList;
 }
 
 struct WatchdogTestData {

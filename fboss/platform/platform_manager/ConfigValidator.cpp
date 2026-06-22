@@ -247,7 +247,7 @@ bool ConfigValidator::isValidLedCtrlBlockConfig(
     XLOG(ERR) << "startPort must be a value greater than 0";
     return false;
   }
-  if (*ledCtrlBlockConfig.numPorts() > numXcvrs_) {
+  /*if (*ledCtrlBlockConfig.numPorts() > numXcvrs_) {
     XLOG(ERR) << fmt::format(
         "numPorts must be less than or equal to {}", numXcvrs_);
     return false;
@@ -263,7 +263,7 @@ bool ConfigValidator::isValidLedCtrlBlockConfig(
         "startPort + numPorts - 1 must be must be less than or equal to {}",
         numXcvrs_);
     return false;
-  }
+  }*/
 
   for (int16_t port = *ledCtrlBlockConfig.startPort();
        port < *ledCtrlBlockConfig.startPort() + *ledCtrlBlockConfig.numPorts();

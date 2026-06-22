@@ -367,6 +367,13 @@ std::vector<LedCtrlConfig> Utils::createLedCtrlConfigs(
   return ledCtrlConfigs;
 }
 
+std::vector<FpgaIpBlockConfig> Utils::createOMLedCtrlConfigs(
+    const PciDeviceConfig& pciDeviceConfig) {
+  std::vector<FpgaIpBlockConfig> omLedCtrlConfigs;
+
+  return omLedCtrlConfigs;
+}
+
 std::vector<FpgaIpBlockConfig> Utils::createMdioBusConfigs(
     const PciDeviceConfig& pciDeviceConfig) {
   std::vector<FpgaIpBlockConfig> mdioBusConfigs;

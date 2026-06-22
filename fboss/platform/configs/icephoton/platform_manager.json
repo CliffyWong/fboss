@@ -31,9 +31,9 @@
       "pmUnitName": "NETLAKE20"
     },
     "SMB_SLOT": {
-      "numOutgoingI2cBuses": 5,
+      "numOutgoingI2cBuses": 19,
       "idpromConfig": {
-        "busName": "INCOMING@2",
+        "busName": "INCOMING@5",
         "address": "0x50",
         "kernelDeviceName": "24c64"
       },
@@ -126,7 +126,7 @@
               "deviceName": "dom1_i2c_master",
               "csrOffsetCalc": "0x42000 + ({adapterIndex} - {startAdapterIndex})*0x100",
               "startAdapterIndex": 1,
-              "numAdapters": 8
+              "numAdapters": 26
             }
           ],
           "gpioChipConfigs": [
@@ -255,7 +255,7 @@
               "pmUnitScopedNamePrefix": "MCB_DOM",
               "deviceName": "xcvr_ctrl",
               "csrOffsetCalc": "0x40200 + ({portNum} - {startPort})*0x4",
-              "numPorts": 8,
+              "numPorts": 16,
               "startPort": 1
             },
             {
@@ -263,25 +263,33 @@
               "deviceName": "xcvr_ctrl",
               "csrOffsetCalc": "0x1030 + ({portNum} - {startPort})*0x0",
               "numPorts": 1,
-              "startPort": 9
+              "startPort": 17
             }
           ],
           "ledCtrlBlockConfigs": [
             {
               "pmUnitScopedNamePrefix": "MCB_LED",
               "deviceName": "port_led",
-              "csrOffsetCalc": "0x404d0 + ({portNum} - {startPort})*0x8 + ({ledNum} - 1)*0x4",
-              "numPorts": 8,
+              "csrOffsetCalc": "0x40410 + ({portNum} - {startPort})*0x8 + ({ledNum} - 1)*0x4",
+              "numPorts": 32,
               "ledPerPort": 2,
               "startPort": 1
             },
             {
               "pmUnitScopedNamePrefix": "MCB_LED",
               "deviceName": "port_led",
-              "csrOffsetCalc": "0x40510 + ({portNum} - {startPort})*0x8 + ({ledNum} - 1)*0x4",
+              "csrOffsetCalc": "0x48410 + ({portNum} - {startPort})*0x8 + ({ledNum} - 1)*0x4",
+              "numPorts": 32,
+              "ledPerPort": 2,
+              "startPort": 33
+            },
+            {
+              "pmUnitScopedNamePrefix": "MCB_LED",
+              "deviceName": "port_led",
+              "csrOffsetCalc": "0x48510 + ({portNum} - {startPort})*0x8 + ({ledNum} - 1)*0x4",
               "numPorts": 1,
               "ledPerPort": 1,
-              "startPort": 9,
+              "startPort": 65,
               "lanesPerPort": 4
             }
           ],
@@ -317,7 +325,7 @@
           "busName": "MCB_IOB_I2C_MASTER_5",
           "address": "0x60",
           "kernelDeviceName": "pmbus",
-          "pmUnitScopedName": "PMBUS_1",
+          "pmUnitScopedName": "MCB_PWR_BRICK_1",
           "initRegSettings": [
             {
               "__comment__": "Set the page to 0 to ensure the driver can read the correct registers. PR:573",
@@ -332,7 +340,7 @@
           "busName": "MCB_IOB_I2C_MASTER_5",
           "address": "0x61",
           "kernelDeviceName": "pmbus",
-          "pmUnitScopedName": "PMBUS_2",
+          "pmUnitScopedName": "MCB_PWR_BRICK_2",
           "initRegSettings": [
             {
               "__comment__": "Set the page to 0 to ensure the driver can read the correct registers. PR:573",
@@ -345,22 +353,15 @@
         },
         {
           "busName": "MCB_IOB_I2C_MASTER_6",
+          "address": "0x4d",
+          "kernelDeviceName": "lm75b",
+          "pmUnitScopedName": "MCB_COME_INLET_TSENSOR"
+        },
+        {
+          "busName": "MCB_IOB_I2C_MASTER_6",
           "address": "0x4f",
           "kernelDeviceName": "lm75b",
-          "pmUnitScopedName": "PB_INLET_TSENSOR"
-        },
-        {
-          "busName": "MCB_IOB_I2C_MASTER_9",
-          "address": "0x46",
-          "kernelDeviceName": "tps1689",
-          "pmUnitScopedName": "48V_STBY_PWR_SENSOR"
-        },
-        {
-          "busName": "MCB_IOB_I2C_MASTER_14",
-          "address": "0x33",
-          "kernelDeviceName": "tahansb_fancpld",
-          "pmUnitScopedName": "MCB_FAN_CPLD",
-          "isWatchdog": true
+          "pmUnitScopedName": "MCB_PB_INLET_TSENSOR"
         },
         {
           "busName": "MCB_IOB_I2C_MASTER_14",
@@ -464,7 +465,7 @@
           "busName": "MCB_IOB_I2C_MASTER_16",
           "address": "0x4c",
           "kernelDeviceName": "tps25990",
-          "pmUnitScopedName": "LOAD_SWITCH_MONITOR"
+          "pmUnitScopedName": "MCB_LOAD_SWITCH_MONITOR"
         },
         {
           "busName": "MCB_IOB_I2C_MASTER_17",
@@ -473,46 +474,65 @@
           "pmUnitScopedName": "OOB_88E6321_EEPROM"
         },
         {
-          "busName": "MCB_IOB_I2C_MASTER_19",
-          "address": "0x4c",
-          "kernelDeviceName": "tps25990",
-          "pmUnitScopedName": "MCB_FAN1_SENSOR"
-        },
-        {
-          "busName": "MCB_IOB_I2C_MASTER_19",
-          "address": "0x4d",
-          "kernelDeviceName": "tps25990",
-          "pmUnitScopedName": "MCB_FAN2_SENSOR"
-        },
-        {
           "busName": "MCB_IOB_I2C_MASTER_20",
-          "address": "0x4c",
-          "kernelDeviceName": "tps25990",
-          "pmUnitScopedName": "MCB_FAN3_SENSOR"
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "MCB_MUX2",
+          "numOutgoingChannels": 6
         },
         {
-          "busName": "MCB_IOB_I2C_MASTER_20",
-          "address": "0x4d",
-          "kernelDeviceName": "tps25990",
-          "pmUnitScopedName": "MCB_FAN4_SENSOR"
+          "busName": "MCB_MUX2@0",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "MCB_XP3R3V_STBY"
         },
         {
-          "busName": "MCB_IOB_I2C_MASTER_21",
-          "address": "0x4d",
-          "kernelDeviceName": "lm75b",
-          "pmUnitScopedName": "MCB_COME_INLET_TSENSOR"
+          "busName": "MCB_MUX2@1",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "MCB_XP3R3V"
+        },
+        {
+          "busName": "MCB_MUX2@2",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "MCB_XP3R7V"
+        },
+        {
+          "busName": "MCB_MUX2@3",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "MCB_XP1R0V_IOB"
+        },
+        {
+          "busName": "MCB_MUX2@4",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "MCB_XP5R0V"
+        },
+        {
+          "busName": "MCB_MUX2@5",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "MCB_XP5R0V_STBY"
         },
         {
           "busName": "MCB_IOB_I2C_MASTER_22",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "OSFP_PWR"
+          "address": "0x4d",
+          "kernelDeviceName": "lm75",
+          "pmUnitScopedName": "MCB_THERMAL_SENSOR1"
+        },
+        {
+          "busName": "MCB_IOB_I2C_MASTER_22",
+          "address": "0x4f",
+          "kernelDeviceName": "lm75",
+          "pmUnitScopedName": "MCB_THERMAL_SENSOR2"
         },
         {
           "busName": "MCB_IOB_I2C_MASTER_23",
           "address": "0x11",
           "kernelDeviceName": "ltc4287",
-          "pmUnitScopedName": "48V_HSC_MONITOR"
+          "pmUnitScopedName": "MCB_48V_HSC_MONITOR"
         },
         {
           "busName": "MCB_IOB_I2C_MASTER_24",
@@ -533,32 +553,6 @@
           "address": "0x37",
           "kernelDeviceName": "adc128d818",
           "pmUnitScopedName": "MCB_ADC2_MONITOR",
-          "initRegSettings": [
-            {
-              "regOffset": 11,
-              "ioBuf": [
-                2
-              ]
-            }
-          ]
-        },
-        {
-          "busName": "MCB_IOB_I2C_MASTER_26",
-          "address": "0x4e",
-          "kernelDeviceName": "lm75b",
-          "pmUnitScopedName": "MCB_COME_OUTLET_TSENSOR"
-        },
-        {
-          "busName": "MCB_IOB_I2C_MASTER_27",
-          "address": "0x4c",
-          "kernelDeviceName": "lm75b",
-          "pmUnitScopedName": "PB_OUTLET_TSENSOR"
-        },
-        {
-          "busName": "MCB_IOB_I2C_MASTER_27",
-          "address": "0x1f",
-          "kernelDeviceName": "adc128d818",
-          "pmUnitScopedName": "MCB_ADC3_MONITOR",
           "initRegSettings": [
             {
               "regOffset": 11,
@@ -590,7 +584,21 @@
             "MCB_IOB_I2C_MASTER_8",
             "MCB_IOB_I2C_MASTER_10",
             "MCB_IOB_I2C_MASTER_11",
-            "MCB_IOB_I2C_MASTER_12"
+            "MCB_IOB_I2C_MASTER_12",
+            "MCB_IOB_I2C_MASTER_27",
+            "MCB_DOM_I2C_MASTER_17",
+            "MCB_DOM_I2C_MASTER_18",
+            "MCB_DOM_I2C_MASTER_19",
+            "MCB_DOM_I2C_MASTER_20",
+            "MCB_DOM_I2C_MASTER_21",
+            "MCB_DOM_I2C_MASTER_22",
+            "MCB_DOM_I2C_MASTER_23",
+            "MCB_DOM_I2C_MASTER_24",
+            "MCB_DOM_I2C_MASTER_25",
+            "MCB_DOM_I2C_MASTER_26",
+            "MCB_DOM_I2C_MASTER_27",
+            "MCB_DOM_I2C_MASTER_28",
+            "MCB_DOM_I2C_MASTER_29"
           ]
         }
       }
@@ -658,230 +666,901 @@
       "i2cDeviceConfigs": [
         {
           "busName": "INCOMING@0",
-          "address": "0x74",
+          "address": "0x70",
           "kernelDeviceName": "pca9548",
-          "pmUnitScopedName": "SMB_MUX",
+          "pmUnitScopedName": "SMB_MUX_A",
           "numOutgoingChannels": 8
         },
         {
-          "busName": "SMB_MUX@0",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_0"
+          "busName": "SMB_MUX_A@0",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R72V_PB_TRVDD_1"
         },
         {
-          "busName": "SMB_MUX@1",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_1"
+          "busName": "SMB_MUX_A@1",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R8V_PT_VDDC_0"
         },
         {
-          "busName": "SMB_MUX@1",
-          "address": "0x4c",
-          "kernelDeviceName": "tmp432",
-          "pmUnitScopedName": "SMB_TH6_SENSOR_TMP432_1",
-          "initRegSettings": [
-            {
-              "__comment__": "Local temp(temp1) high limit setting for high byte. PR:1001",
-              "regOffset": 11,
-              "ioBuf": [
-                95
-              ]
-            },
-            {
-              "__comment__": "Remote temp1(temp2) high limit setting for high byte. PR:1001",
-              "regOffset": 13,
-              "ioBuf": [
-                95
-              ]
-            },
-            {
-              "__comment__": "Remote temp1(temp2) high limit setting for low byte. PR:594",
-              "regOffset": 19,
-              "ioBuf": [
-                0
-              ]
-            },
-            {
-              "__comment__": "Remote temp2(temp3) high limit setting for high byte. PR:1001",
-              "regOffset": 21,
-              "ioBuf": [
-                95
-              ]
-            },
-            {
-              "__comment__": "Remote temp2(temp3) high limit setting for low byte. PR:594",
-              "regOffset": 23,
-              "ioBuf": [
-                0
-              ]
-            },
-            {
-              "__comment__": "N-factor correction remote1. PR:594",
-              "regOffset": 39,
-              "ioBuf": [
-                5
-              ]
-            },
-            {
-              "__comment__": "N-factor correction remote2. PR:594",
-              "regOffset": 40,
-              "ioBuf": [
-                5
-              ]
-            },
-            {
-              "__comment__": "Local temp(temp1) high limit setting for low byte. PR:594",
-              "regOffset": 61,
-              "ioBuf": [
-                0
-              ]
-            }
-          ]
+          "busName": "SMB_MUX_A@2",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R8V_PT_VDDC_6"
         },
         {
-          "busName": "SMB_MUX@2",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_2"
+          "busName": "SMB_MUX_A@3",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP1R2V_TH6_VDDHTX"
         },
         {
-          "busName": "SMB_MUX@2",
-          "address": "0x49",
-          "kernelDeviceName": "lm75b",
-          "pmUnitScopedName": "SMB_OUTLET_TH6_TSENSOR"
+          "busName": "SMB_MUX_A@4",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP3R3V"
         },
         {
-          "busName": "SMB_MUX@3",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_3"
+          "busName": "SMB_MUX_A@5",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP5R0V_A"
         },
         {
-          "busName": "SMB_MUX@3",
-          "address": "0x4c",
-          "kernelDeviceName": "tmp432",
-          "pmUnitScopedName": "SMB_TH6_SENSOR_TMP432_2",
-          "initRegSettings": [
-            {
-              "__comment__": "Local temp(temp1) high limit setting for high byte. PR:1001",
-              "regOffset": 11,
-              "ioBuf": [
-                95
-              ]
-            },
-            {
-              "__comment__": "Remote temp1(temp2) high limit setting for high byte. PR:1001",
-              "regOffset": 13,
-              "ioBuf": [
-                95
-              ]
-            },
-            {
-              "__comment__": "Remote temp1(temp2) high limit setting for low byte. PR:594",
-              "regOffset": 19,
-              "ioBuf": [
-                0
-              ]
-            },
-            {
-              "__comment__": "N-factor correction remote1. PR:594",
-              "regOffset": 39,
-              "ioBuf": [
-                5
-              ]
-            },
-            {
-              "__comment__": "N-factor correction remote2. PR:594",
-              "regOffset": 40,
-              "ioBuf": [
-                5
-              ]
-            },
-            {
-              "__comment__": "Local temp(temp1) high limit setting for low byte. PR:594",
-              "regOffset": 61,
-              "ioBuf": [
-                0
-              ]
-            }
-          ]
+          "busName": "SMB_MUX_A@6",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP1R8V"
         },
         {
-          "busName": "SMB_MUX@4",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_4"
-        },
-        {
-          "busName": "SMB_MUX@5",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_5_1"
-        },
-        {
-          "busName": "SMB_MUX@5",
-          "address": "0x6a",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_5_2"
-        },
-        {
-          "busName": "SMB_MUX@6",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_6"
-        },
-        {
-          "busName": "SMB_MUX@7",
-          "address": "0x70",
-          "kernelDeviceName": "xdpe15284",
-          "pmUnitScopedName": "SMB_ASIC_VOLTAGE_7"
+          "busName": "SMB_MUX_A@7",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP1R8V_MCU_0"
         },
         {
           "busName": "INCOMING@1",
-          "address": "0x1f",
-          "kernelDeviceName": "adc128d818",
-          "pmUnitScopedName": "SMB_ADC1_SENSOR",
-          "initRegSettings": [
-            {
-              "regOffset": 11,
-              "ioBuf": [
-                2
-              ]
-            }
-          ]
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "SMB_MUX_B",
+          "numOutgoingChannels": 8
         },
         {
-          "busName": "INCOMING@2",
+          "busName": "SMB_MUX_B@0",
+          "address": "0x48",
+          "kernelDeviceName": "lm75",
+          "pmUnitScopedName": "SMB_THERMAL_SENSOR_1"
+        },
+        {
+          "busName": "SMB_MUX_B@1",
           "address": "0x33",
-          "kernelDeviceName": "th6_smbcpld",
+          "kernelDeviceName": "icephoton_syscpld",
           "pmUnitScopedName": "SMB_CPLD"
         },
         {
+          "busName": "SMB_MUX_B@1",
+          "address": "0x50",
+          "kernelDeviceName": "24c64",
+          "pmUnitScopedName": "SMB_ELSFP_EEPROM"
+        },
+        {
+          "busName": "SMB_MUX_B@2",
+          "address": "0x1f",
+          "kernelDeviceName": "adc128d",
+          "pmUnitScopedName": "SMB_ADC_MONITOR_1"
+        },
+        {
+          "busName": "SMB_MUX_B@2",
+          "address": "0x4c",
+          "kernelDeviceName": "tmp432",
+          "pmUnitScopedName": "SMB_SENSOR_TMP432_1"
+        },
+        {
+          "busName": "SMB_MUX_B@3",
+          "address": "0x1f",
+          "kernelDeviceName": "adc128d",
+          "pmUnitScopedName": "SMB_ADC_MONITOR_2"
+        },
+        {
+          "busName": "SMB_MUX_B@3",
+          "address": "0x4c",
+          "kernelDeviceName": "tmp432",
+          "pmUnitScopedName": "SMB_SENSOR_TMP432_2"
+        },
+        {
+          "busName": "SMB_MUX_B@4",
+          "address": "0x1f",
+          "kernelDeviceName": "adc128d",
+          "pmUnitScopedName": "SMB_ADC_MONITOR_3"
+        },
+        {
+          "busName": "INCOMING@2",
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "SMB_MUX_C",
+          "numOutgoingChannels": 8
+        },
+        {
+          "busName": "SMB_MUX_C@0",
+          "address": "0x21",
+          "kernelDeviceName": "mp2891",
+          "pmUnitScopedName": "SMB_XP0R8V_VDDC"
+        },
+        {
+          "busName": "SMB_MUX_C@1",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R9V_TH6_TRVDD_0"
+        },
+        {
+          "busName": "SMB_MUX_C@2",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R8V_PT_VDDC_2"
+        },
+        {
+          "busName": "SMB_MUX_C@3",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP1R5V_TH6_RVDD_0"
+        },
+        {
+          "busName": "SMB_MUX_C@4",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP0R8V_TH6_VDDA"
+        },
+        {
+          "busName": "SMB_MUX_C@5",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP3R3V_A"
+        },
+        {
+          "busName": "SMB_MUX_C@6",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP1R2V"
+        },
+        {
+          "busName": "SMB_MUX_C@7",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP3R7V"
+        },
+        {
           "busName": "INCOMING@3",
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "SMB_MUX_D",
+          "numOutgoingChannels": 8
+        },
+        {
+          "busName": "SMB_MUX_D@0",
+          "address": "0x49",
+          "kernelDeviceName": "lm75",
+          "pmUnitScopedName": "SMB_THERMAL_SENSOR_2"
+        },
+        {
+          "busName": "SMB_MUX_D@1",
+          "address": "0x49",
+          "kernelDeviceName": "lm75",
+          "pmUnitScopedName": "SMB_THERMAL_SENSOR_3"
+        },
+        {
+          "busName": "SMB_MUX_D@2",
+          "address": "0x49",
+          "kernelDeviceName": "icephoton_oe_cpld",
+          "pmUnitScopedName": "SMB_OE_CPLD"
+        },
+        {
+          "busName": "SMB_MUX_D@3",
           "address": "0x35",
-          "kernelDeviceName": "adc128d818",
-          "pmUnitScopedName": "SMB_ADC2_SENSOR",
-          "initRegSettings": [
-            {
-              "regOffset": 11,
-              "ioBuf": [
-                2
-              ]
-            }
-          ]
+          "kernelDeviceName": "adc128d",
+          "pmUnitScopedName": "SMB_ADC_MONITOR_4"
+        },
+        {
+          "busName": "SMB_MUX_D@3",
+          "address": "0x4c",
+          "kernelDeviceName": "tmp432",
+          "pmUnitScopedName": "SMB_SENSOR_TMP432_3"
+        },
+        {
+          "busName": "SMB_MUX_D@4",
+          "address": "0x58",
+          "kernelDeviceName": "adc128d",
+          "pmUnitScopedName": "SMB_ADC_MONITOR_5"
         },
         {
           "busName": "INCOMING@4",
-          "address": "0x48",
-          "kernelDeviceName": "lm75b",
-          "pmUnitScopedName": "SMB_INLET_TH6_TSENSOR"
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "SMB_MUX_E",
+          "numOutgoingChannels": 8
         },
         {
-          "busName": "INCOMING@4",
+          "busName": "SMB_MUX_E@0",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R72V_PB_TRVDD_3"
+        },
+        {
+          "busName": "SMB_MUX_E@1",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R9V_TH6_TRVDD_1"
+        },
+        {
+          "busName": "SMB_MUX_E@2",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP0R8V_PT_VDDC_4"
+        },
+        {
+          "busName": "SMB_MUX_E@3",
+          "address": "0x7d",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP1R8V_MCU_1"
+        },
+        {
+          "busName": "SMB_MUX_E@4",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP1R8V_TH6_VDDO"
+        },
+        {
+          "busName": "SMB_MUX_E@5",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP5R0V_SMB"
+        },
+        {
+          "busName": "SMB_MUX_E@6",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP1R8V_CPLD"
+        },
+        {
+          "busName": "SMB_MUX_E@7",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP2R2V"
+        },
+        {
+          "busName": "INCOMING@6",
+          "address": "0x71",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "DOM_MUX",
+          "numOutgoingChannels": 5
+        },
+        {
+          "busName": "DOM_MUX@0",
           "address": "0x76",
-          "kernelDeviceName": "pmbus",
-          "pmUnitScopedName": "SMB_VDDCORE"
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_XP3R3V_ELSFP_LR"
+        },
+        {
+          "busName": "DOM_MUX@1",
+          "address": "0x2b",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP5R0V_PIC"
+        },
+        {
+          "busName": "DOM_MUX@2",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_XP3R3V_PIC"
+        },
+        {
+          "busName": "DOM_MUX@3",
+          "address": "0x1f",
+          "kernelDeviceName": "adc128d818",
+          "pmUnitScopedName": "SMB_ELSFP_ADC_MONITOR"
+        },
+        {
+          "busName": "INCOMING@7",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP1R8V_AVDD_A"
+        },
+        {
+          "busName": "INCOMING@8",
+          "address": "0x2b",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP1R8V_AVDD_B"
+        },
+        {
+          "busName": "INCOMING@9",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_RX_A"
+        },
+        {
+          "busName": "INCOMING@10",
+          "address": "0x2b",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_RX_B"
+        },
+        {
+          "busName": "INCOMING@11",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP1R8V_AVDD_C"
+        },
+        {
+          "busName": "INCOMING@12",
+          "address": "0x2b",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP1R8V_AVDD_D"
+        },
+        {
+          "busName": "INCOMING@13",
+          "address": "0x29",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_RX_C"
+        },
+        {
+          "busName": "INCOMING@14",
+          "address": "0x2b",
+          "kernelDeviceName": "mpq82d00",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_RX_D"
+        },
+        {
+          "busName": "INCOMING@15",
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "OE_MUX_A",
+          "numOutgoingChannels": 8
+        },
+        {
+          "busName": "OE_MUX_A@0",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_0"
+        },
+        {
+          "busName": "OE_MUX_A@0",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_0"
+        },
+        {
+          "busName": "OE_MUX_A@0",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_0"
+        },
+        {
+          "busName": "OE_MUX_A@1",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_0"
+        },
+        {
+          "busName": "OE_MUX_A@1",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_0"
+        },
+        {
+          "busName": "OE_MUX_A@1",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_0"
+        },
+        {
+          "busName": "OE_MUX_A@2",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_1"
+        },
+        {
+          "busName": "OE_MUX_A@2",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_1"
+        },
+        {
+          "busName": "OE_MUX_A@3",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_1"
+        },
+        {
+          "busName": "OE_MUX_A@3",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_1"
+        },
+        {
+          "busName": "OE_MUX_A@3",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_1"
+        },
+        {
+          "busName": "OE_MUX_A@4",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_2"
+        },
+        {
+          "busName": "OE_MUX_A@4",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_2"
+        },
+        {
+          "busName": "OE_MUX_A@4",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_2"
+        },
+        {
+          "busName": "OE_MUX_A@5",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_2"
+        },
+        {
+          "busName": "OE_MUX_A@5",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_2"
+        },
+        {
+          "busName": "OE_MUX_A@5",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_2"
+        },
+        {
+          "busName": "OE_MUX_A@6",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_3"
+        },
+        {
+          "busName": "OE_MUX_A@6",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_3"
+        },
+        {
+          "busName": "OE_MUX_A@7",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_3"
+        },
+        {
+          "busName": "OE_MUX_A@7",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_3"
+        },
+        {
+          "busName": "OE_MUX_A@7",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_3"
+        },
+        {
+          "busName": "INCOMING@16",
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "OE_MUX_B",
+          "numOutgoingChannels": 8
+        },
+        {
+          "busName": "OE_MUX_B@0",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_4"
+        },
+        {
+          "busName": "OE_MUX_B@0",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_4"
+        },
+        {
+          "busName": "OE_MUX_B@0",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_4"
+        },
+        {
+          "busName": "OE_MUX_B@1",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_4"
+        },
+        {
+          "busName": "OE_MUX_B@1",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_4"
+        },
+        {
+          "busName": "OE_MUX_B@1",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_4"
+        },
+        {
+          "busName": "OE_MUX_B@2",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_5"
+        },
+        {
+          "busName": "OE_MUX_B@2",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_5"
+        },
+        {
+          "busName": "OE_MUX_B@3",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_5"
+        },
+        {
+          "busName": "OE_MUX_B@3",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_5"
+        },
+        {
+          "busName": "OE_MUX_B@3",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_5"
+        },
+        {
+          "busName": "OE_MUX_B@4",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_6"
+        },
+        {
+          "busName": "OE_MUX_B@4",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_6"
+        },
+        {
+          "busName": "OE_MUX_B@4",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_6"
+        },
+        {
+          "busName": "OE_MUX_B@5",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_6"
+        },
+        {
+          "busName": "OE_MUX_B@5",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_6"
+        },
+        {
+          "busName": "OE_MUX_B@5",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_6"
+        },
+        {
+          "busName": "OE_MUX_B@6",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_7"
+        },
+        {
+          "busName": "OE_MUX_B@6",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_7"
+        },
+        {
+          "busName": "OE_MUX_B@7",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_7"
+        },
+        {
+          "busName": "OE_MUX_B@7",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_7"
+        },
+        {
+          "busName": "OE_MUX_B@7",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_7"
+        },
+        {
+          "busName": "INCOMING@17",
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "OE_MUX_C",
+          "numOutgoingChannels": 8
+        },
+        {
+          "busName": "OE_MUX_C@0",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_8"
+        },
+        {
+          "busName": "OE_MUX_C@0",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_8"
+        },
+        {
+          "busName": "OE_MUX_C@0",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_8"
+        },
+        {
+          "busName": "OE_MUX_C@1",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_8"
+        },
+        {
+          "busName": "OE_MUX_C@1",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_8"
+        },
+        {
+          "busName": "OE_MUX_C@1",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_8"
+        },
+        {
+          "busName": "OE_MUX_C@2",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_9"
+        },
+        {
+          "busName": "OE_MUX_C@2",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_9"
+        },
+        {
+          "busName": "OE_MUX_C@3",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_9"
+        },
+        {
+          "busName": "OE_MUX_C@3",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_9"
+        },
+        {
+          "busName": "OE_MUX_C@3",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_9"
+        },
+        {
+          "busName": "OE_MUX_C@4",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_10"
+        },
+        {
+          "busName": "OE_MUX_C@4",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_10"
+        },
+        {
+          "busName": "OE_MUX_C@4",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_10"
+        },
+        {
+          "busName": "OE_MUX_C@5",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_10"
+        },
+        {
+          "busName": "OE_MUX_C@5",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_10"
+        },
+        {
+          "busName": "OE_MUX_C@5",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_10"
+        },
+        {
+          "busName": "OE_MUX_C@6",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_11"
+        },
+        {
+          "busName": "OE_MUX_C@6",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_11"
+        },
+        {
+          "busName": "OE_MUX_C@7",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_11"
+        },
+        {
+          "busName": "OE_MUX_C@7",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_11"
+        },
+        {
+          "busName": "OE_MUX_C@7",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_11"
+        },
+        {
+          "busName": "INCOMING@18",
+          "address": "0x70",
+          "kernelDeviceName": "pca9548",
+          "pmUnitScopedName": "OE_MUX_D",
+          "numOutgoingChannels": 8
+        },
+        {
+          "busName": "OE_MUX_D@0",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_12"
+        },
+        {
+          "busName": "OE_MUX_D@0",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_12"
+        },
+        {
+          "busName": "OE_MUX_D@0",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_12"
+        },
+        {
+          "busName": "OE_MUX_D@1",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_12"
+        },
+        {
+          "busName": "OE_MUX_D@1",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_12"
+        },
+        {
+          "busName": "OE_MUX_D@1",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_12"
+        },
+        {
+          "busName": "OE_MUX_D@2",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_13"
+        },
+        {
+          "busName": "OE_MUX_D@2",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_13"
+        },
+        {
+          "busName": "OE_MUX_D@3",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_13"
+        },
+        {
+          "busName": "OE_MUX_D@3",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_13"
+        },
+        {
+          "busName": "OE_MUX_D@3",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_13"
+        },
+        {
+          "busName": "OE_MUX_D@4",
+          "address": "0x34",
+          "kernelDeviceName": "mp2971",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_DVDD_TX_14"
+        },
+        {
+          "busName": "OE_MUX_D@4",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_14"
+        },
+        {
+          "busName": "OE_MUX_D@4",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_14"
+        },
+        {
+          "busName": "OE_MUX_D@5",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_14"
+        },
+        {
+          "busName": "OE_MUX_D@5",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_14"
+        },
+        {
+          "busName": "OE_MUX_D@5",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_14"
+        },
+        {
+          "busName": "OE_MUX_D@6",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP0R75V_AVDD_TX_15"
+        },
+        {
+          "busName": "OE_MUX_D@6",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_TX_15"
+        },
+        {
+          "busName": "OE_MUX_D@7",
+          "address": "0x34",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_CLK_TX_15"
+        },
+        {
+          "busName": "OE_MUX_D@7",
+          "address": "0x35",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_DATA_TX_15"
+        },
+        {
+          "busName": "OE_MUX_D@7",
+          "address": "0x36",
+          "kernelDeviceName": "mpm3695",
+          "pmUnitScopedName": "SMB_OE_XP1R2V_AVDD_RX_15"
         }
       ]
     }
@@ -892,26 +1571,6 @@
     "/run/devmap/eeproms/RUNBMC_EEPROM": "/RUNBMC_SLOT@0/[IDPROM]",
     "/run/devmap/eeproms/COME_EEPROM": "/COMESE_SLOT@0/[IDPROM]",
     "/run/devmap/eeproms/SMB_EEPROM": "/SMB_SLOT@0/[IDPROM]",
-    "/run/devmap/sensors/CPU_CORE_TEMP": "/[CPU_CORE_TEMP]",
-    "/run/devmap/sensors/PMBUS_1": "/[PMBUS_1]",
-    "/run/devmap/sensors/PMBUS_2": "/[PMBUS_2]",
-    "/run/devmap/sensors/MCB_COME_INLET_TSENSOR": "/[MCB_COME_INLET_TSENSOR]",
-    "/run/devmap/sensors/PB_INLET_TSENSOR": "/[PB_INLET_TSENSOR]",
-    "/run/devmap/sensors/MCB_COME_OUTLET_TSENSOR": "/[MCB_COME_OUTLET_TSENSOR]",
-    "/run/devmap/sensors/48V_STBY_PWR_SENSOR": "/[48V_STBY_PWR_SENSOR]",
-    "/run/devmap/sensors/MCB_FAN_CPLD": "/[MCB_FAN_CPLD]",
-    "/run/devmap/sensors/LOAD_SWITCH_MONITOR": "/[LOAD_SWITCH_MONITOR]",
-    "/run/devmap/sensors/OSFP_PWR": "/[OSFP_PWR]",
-    "/run/devmap/sensors/48V_HSC_MONITOR": "/[48V_HSC_MONITOR]",
-    "/run/devmap/sensors/MCB_FAN1_SENSOR": "/[MCB_FAN1_SENSOR]",
-    "/run/devmap/sensors/MCB_FAN2_SENSOR": "/[MCB_FAN2_SENSOR]",
-    "/run/devmap/sensors/MCB_FAN3_SENSOR": "/[MCB_FAN3_SENSOR]",
-    "/run/devmap/sensors/MCB_FAN4_SENSOR": "/[MCB_FAN4_SENSOR]",
-    "/run/devmap/sensors/MCB_ADC1_MONITOR": "/[MCB_ADC1_MONITOR]",
-    "/run/devmap/sensors/MCB_ADC2_MONITOR": "/[MCB_ADC2_MONITOR]",
-    "/run/devmap/sensors/MCB_ADC3_MONITOR": "/[MCB_ADC3_MONITOR]",
-    "/run/devmap/sensors/PB_OUTLET_TSENSOR": "/[PB_OUTLET_TSENSOR]",
-    "/run/devmap/sensors/RUNBMC_THERMAL_SENSOR": "/RUNBMC_SLOT@0/[RUNBMC_THERMAL_SENSOR]",
     "/run/devmap/cplds/SCM_CPLD": "/[SCM_CPLD]",
     "/run/devmap/cplds/MCB_CPLD": "/[MCB_CPLD]",
     "/run/devmap/cplds/SMB_CPLD": "/SMB_SLOT@0/[SMB_CPLD]",
@@ -919,7 +1578,158 @@
     "/run/devmap/fpgas/MCB_DOM_INFO_ROM": "/[MCB_DOM_INFO_ROM]",
     "/run/devmap/inforoms/MCB_IOB_INFO_ROM": "/[MCB_IOB_INFO_ROM]",
     "/run/devmap/inforoms/MCB_DOM_INFO_ROM": "/[MCB_DOM_INFO_ROM]",
-    "/run/devmap/watchdogs/FAN_WATCHDOG": "/[MCB_FAN_CPLD]",
+    "/run/devmap/sensors/CPU_CORE_TEMP": "/[CPU_CORE_TEMP]",
+    "/run/devmap/sensors/MCB_PWR_BRICK_1": "/[MCB_PWR_BRICK_1]",
+    "/run/devmap/sensors/MCB_PWR_BRICK_2": "/[MCB_PWR_BRICK_2]",
+    "/run/devmap/sensors/MCB_COME_INLET_TSENSOR": "/[MCB_COME_INLET_TSENSOR]",
+    "/run/devmap/sensors/MCB_PB_INLET_TSENSOR": "/[MCB_PB_INLET_TSENSOR]",
+    "/run/devmap/sensors/MCB_LOAD_SWITCH_MONITOR": "/[MCB_LOAD_SWITCH_MONITOR]",
+    "/run/devmap/sensors/MCB_XP3R3V_STBY": "/[MCB_XP3R3V_STBY]",
+    "/run/devmap/sensors/MCB_XP3R3V": "/[MCB_XP3R3V]",
+    "/run/devmap/sensors/MCB_XP3R7V": "/[MCB_XP3R7V]",
+    "/run/devmap/sensors/MCB_XP1R0V_IOB": "/[MCB_XP1R0V_IOB]",
+    "/run/devmap/sensors/MCB_XP5R0V": "/[MCB_XP5R0V]",
+    "/run/devmap/sensors/MCB_XP5R0V_STBY": "/[MCB_XP5R0V_STBY]",
+    "/run/devmap/sensors/MCB_THERMAL_SENSOR1": "/[MCB_THERMAL_SENSOR1]",
+    "/run/devmap/sensors/MCB_THERMAL_SENSOR2": "/[MCB_THERMAL_SENSOR2]",
+    "/run/devmap/sensors/MCB_48V_HSC_MONITOR": "/[MCB_48V_HSC_MONITOR]",
+    "/run/devmap/sensors/MCB_ADC1_MONITOR": "/[MCB_ADC1_MONITOR]",
+    "/run/devmap/sensors/MCB_ADC2_MONITOR": "/[MCB_ADC2_MONITOR]",
+    "/run/devmap/sensors/SMB_XP0R72V_PB_TRVDD_1": "/SMB_SLOT@0/[SMB_XP0R72V_PB_TRVDD_1]",
+    "/run/devmap/sensors/SMB_XP0R8V_PT_VDDC_0": "/SMB_SLOT@0/[SMB_XP0R8V_PT_VDDC_0]",
+    "/run/devmap/sensors/SMB_XP0R8V_PT_VDDC_6": "/SMB_SLOT@0/[SMB_XP0R8V_PT_VDDC_6]",
+    "/run/devmap/sensors/SMB_XP1R2V_TH6_VDDHTX": "/SMB_SLOT@0/[SMB_XP1R2V_TH6_VDDHTX]",
+    "/run/devmap/sensors/SMB_XP3R3V": "/SMB_SLOT@0/[SMB_XP3R3V]",
+    "/run/devmap/sensors/SMB_XP5R0V_A": "/SMB_SLOT@0/[SMB_XP5R0V_A]",
+    "/run/devmap/sensors/SMB_XP1R8V": "/SMB_SLOT@0/[SMB_XP1R8V]",
+    "/run/devmap/sensors/SMB_XP1R8V_MCU_0": "/SMB_SLOT@0/[SMB_XP1R8V_MCU_0]",
+    "/run/devmap/sensors/SMB_THERMAL_SENSOR_1": "/SMB_SLOT@0/[SMB_THERMAL_SENSOR_1]",
+    "/run/devmap/sensors/SMB_ADC_MONITOR_1": "/SMB_SLOT@0/[SMB_ADC_MONITOR_1]",
+    "/run/devmap/sensors/SMB_SENSOR_TMP432_1": "/SMB_SLOT@0/[SMB_SENSOR_TMP432_1]",
+    "/run/devmap/sensors/SMB_ADC_MONITOR_2": "/SMB_SLOT@0/[SMB_ADC_MONITOR_2]",
+    "/run/devmap/sensors/SMB_SENSOR_TMP432_2": "/SMB_SLOT@0/[SMB_SENSOR_TMP432_2]",
+    "/run/devmap/sensors/SMB_ADC_MONITOR_3": "/SMB_SLOT@0/[SMB_ADC_MONITOR_3]",
+    "/run/devmap/sensors/SMB_XP0R8V_VDDC": "/SMB_SLOT@0/[SMB_XP0R8V_VDDC]",
+    "/run/devmap/sensors/SMB_XP0R9V_TH6_TRVDD_0": "/SMB_SLOT@0/[SMB_XP0R9V_TH6_TRVDD_0]",
+    "/run/devmap/sensors/SMB_XP0R8V_PT_VDDC_2": "/SMB_SLOT@0/[SMB_XP0R8V_PT_VDDC_2]",
+    "/run/devmap/sensors/SMB_XP1R5V_TH6_RVDD_0": "/SMB_SLOT@0/[SMB_XP1R5V_TH6_RVDD_0]",
+    "/run/devmap/sensors/SMB_XP0R8V_TH6_VDDA": "/SMB_SLOT@0/[SMB_XP0R8V_TH6_VDDA]",
+    "/run/devmap/sensors/SMB_XP3R3V_A": "/SMB_SLOT@0/[SMB_XP3R3V_A]",
+    "/run/devmap/sensors/SMB_XP1R2V": "/SMB_SLOT@0/[SMB_XP1R2V]",
+    "/run/devmap/sensors/SMB_XP3R7V": "/SMB_SLOT@0/[SMB_XP3R7V]",
+    "/run/devmap/sensors/SMB_THERMAL_SENSOR_2": "/SMB_SLOT@0/[SMB_THERMAL_SENSOR_2]",
+    "/run/devmap/sensors/SMB_THERMAL_SENSOR_3": "/SMB_SLOT@0/[SMB_THERMAL_SENSOR_3]",
+    "/run/devmap/sensors/SMB_ADC_MONITOR_4": "/SMB_SLOT@0/[SMB_ADC_MONITOR_4]",
+    "/run/devmap/sensors/SMB_SENSOR_TMP432_3": "/SMB_SLOT@0/[SMB_SENSOR_TMP432_3]",
+    "/run/devmap/sensors/SMB_ADC_MONITOR_5": "/SMB_SLOT@0/[SMB_ADC_MONITOR_5]",
+    "/run/devmap/sensors/SMB_XP0R72V_PB_TRVDD_3": "/SMB_SLOT@0/[SMB_XP0R72V_PB_TRVDD_3]",
+    "/run/devmap/sensors/SMB_XP0R9V_TH6_TRVDD_1": "/SMB_SLOT@0/[SMB_XP0R9V_TH6_TRVDD_1]",
+    "/run/devmap/sensors/SMB_XP0R8V_PT_VDDC_4": "/SMB_SLOT@0/[SMB_XP0R8V_PT_VDDC_4]",
+    "/run/devmap/sensors/SMB_XP1R8V_MCU_1": "/SMB_SLOT@0/[SMB_XP1R8V_MCU_1]",
+    "/run/devmap/sensors/SMB_XP1R8V_TH6_VDDO": "/SMB_SLOT@0/[SMB_XP1R8V_TH6_VDDO]",
+    "/run/devmap/sensors/SMB_XP5R0V_SMB": "/SMB_SLOT@0/[SMB_XP5R0V_SMB]",
+    "/run/devmap/sensors/SMB_XP2R2V": "/SMB_SLOT@0/[SMB_XP2R2V]",
+    "/run/devmap/sensors/SMB_XP3R3V_ELSFP_LR": "/SMB_SLOT@0/[SMB_XP3R3V_ELSFP_LR]",
+    "/run/devmap/sensors/SMB_XP5R0V_PIC": "/SMB_SLOT@0/[SMB_XP5R0V_PIC]",
+    "/run/devmap/sensors/SMB_XP3R3V_PIC": "/SMB_SLOT@0/[SMB_XP3R3V_PIC]",
+    "/run/devmap/sensors/SMB_ELSFP_ADC_MONITOR": "/SMB_SLOT@0/[SMB_ELSFP_ADC_MONITOR]",
+    "/run/devmap/sensors/SMB_OE_XP1R8V_AVDD_A": "/SMB_SLOT@0/[SMB_OE_XP1R8V_AVDD_A]",
+    "/run/devmap/sensors/SMB_OE_XP1R8V_AVDD_B": "/SMB_SLOT@0/[SMB_OE_XP1R8V_AVDD_B]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_RX_A": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_RX_A]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_RX_B": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_RX_B]",
+    "/run/devmap/sensors/SMB_OE_XP1R8V_AVDD_C": "/SMB_SLOT@0/[SMB_OE_XP1R8V_AVDD_C]",
+    "/run/devmap/sensors/SMB_OE_XP1R8V_AVDD_D": "/SMB_SLOT@0/[SMB_OE_XP1R8V_AVDD_D]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_RX_C": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_RX_C]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_RX_D": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_RX_D]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_0": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_0]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_0": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_0]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_0": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_0]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_0": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_0]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_0": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_0]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_0": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_0]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_1": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_1]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_1": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_1]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_1": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_1]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_1": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_1]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_1": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_1]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_2": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_2]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_2": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_2]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_2": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_2]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_2": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_2]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_2": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_2]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_2": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_2]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_3": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_3]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_3": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_3]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_3": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_3]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_3": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_3]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_3": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_3]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_4": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_4]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_4": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_4]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_4": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_4]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_4": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_4]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_4": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_4]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_4": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_4]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_5": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_5]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_5": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_5]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_5": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_5]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_5": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_5]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_5": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_5]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_6": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_6]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_6": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_6]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_6": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_6]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_6": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_6]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_6": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_6]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_6": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_6]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_7": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_7]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_7": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_7]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_7": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_7]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_7": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_7]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_7": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_7]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_8": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_8]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_8": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_8]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_8": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_8]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_8": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_8]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_8": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_8]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_8": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_8]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_9": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_9]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_9": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_9]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_9": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_9]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_9": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_9]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_9": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_9]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_10": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_10]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_10": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_10]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_10": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_10]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_10": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_10]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_10": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_10]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_10": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_10]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_11": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_11]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_11": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_11]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_11": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_11]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_11": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_11]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_11": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_11]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_12": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_12]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_12": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_12]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_12": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_12]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_12": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_12]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_12": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_12]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_12": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_12]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_13": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_13]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_13": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_13]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_13": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_13]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_13": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_13]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_13": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_13]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_DVDD_TX_14": "/SMB_SLOT@0/[SMB_OE_XP0R75V_DVDD_TX_14]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_14": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_14]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_14": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_14]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_14": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_14]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_14": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_14]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_14": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_14]",
+    "/run/devmap/sensors/SMB_OE_XP0R75V_AVDD_TX_15": "/SMB_SLOT@0/[SMB_OE_XP0R75V_AVDD_TX_15]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_TX_15": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_TX_15]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_CLK_TX_15": "/SMB_SLOT@0/[SMB_OE_XP1R2V_CLK_TX_15]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_DATA_TX_15": "/SMB_SLOT@0/[SMB_OE_XP1R2V_DATA_TX_15]",
+    "/run/devmap/sensors/SMB_OE_XP1R2V_AVDD_RX_15": "/SMB_SLOT@0/[SMB_OE_XP1R2V_AVDD_RX_15]",
+    "/run/devmap/sensors/RUNBMC_THERMAL_SENSOR": "/RUNBMC_SLOT@0/[RUNBMC_THERMAL_SENSOR]",
     "/run/devmap/sensors/COME_HWMON1": "/COMESE_SLOT@0/[COME_HWMON1]",
     "/run/devmap/sensors/COME_HWMON2": "/COMESE_SLOT@0/[COME_HWMON2]",
     "/run/devmap/sensors/COME_HWMON3": "/COMESE_SLOT@0/[COME_HWMON3]",
@@ -927,22 +1737,6 @@
     "/run/devmap/sensors/COME_OUTLET_TSENSOR": "/COMESE_SLOT@0/[COME_OUTLET_TSENSOR]",
     "/run/devmap/sensors/COME_DIMM1_TSENSOR": "/COMESE_SLOT@0/[COME_DIMM1_TSENSOR]",
     "/run/devmap/sensors/COME_DIMM2_TSENSOR": "/COMESE_SLOT@0/[COME_DIMM2_TSENSOR]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_0": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_0]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_1": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_1]",
-    "/run/devmap/sensors/SMB_TH6_SENSOR_TMP432_1": "/SMB_SLOT@0/[SMB_TH6_SENSOR_TMP432_1]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_2": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_2]",
-    "/run/devmap/sensors/SMB_OUTLET_TH6_TSENSOR": "/SMB_SLOT@0/[SMB_OUTLET_TH6_TSENSOR]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_3": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_3]",
-    "/run/devmap/sensors/SMB_TH6_SENSOR_TMP432_2": "/SMB_SLOT@0/[SMB_TH6_SENSOR_TMP432_2]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_4": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_4]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_5_1": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_5_1]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_5_2": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_5_2]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_6": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_6]",
-    "/run/devmap/sensors/SMB_ASIC_VOLTAGE_7": "/SMB_SLOT@0/[SMB_ASIC_VOLTAGE_7]",
-    "/run/devmap/sensors/SMB_ADC1_SENSOR": "/SMB_SLOT@0/[SMB_ADC1_SENSOR]",
-    "/run/devmap/sensors/SMB_ADC2_SENSOR": "/SMB_SLOT@0/[SMB_ADC2_SENSOR]",
-    "/run/devmap/sensors/SMB_INLET_TH6_TSENSOR": "/SMB_SLOT@0/[SMB_INLET_TH6_TSENSOR]",
-    "/run/devmap/sensors/SMB_VDDCORE": "/SMB_SLOT@0/[SMB_VDDCORE]",
     "/run/devmap/gpiochips/MCB_GPIO_CHIP_1": "/[MCB_GPIO_CHIP_1]",
     "/run/devmap/flashes/MCB_SPI_MASTER_1_DEVICE_1": "/[MCB_SPI_MASTER_1_DEVICE_1]",
     "/run/devmap/flashes/MCB_SPI_MASTER_2_DEVICE_1": "/[MCB_SPI_MASTER_2_DEVICE_1]",
@@ -967,13 +1761,29 @@
     "/run/devmap/xcvrs/xcvr_ctrl_7": "/[MCB_DOM_XCVR_CTRL_PORT_7]",
     "/run/devmap/xcvrs/xcvr_io_8": "/[MCB_DOM_I2C_MASTER_8]",
     "/run/devmap/xcvrs/xcvr_ctrl_8": "/[MCB_DOM_XCVR_CTRL_PORT_8]",
-    "/run/devmap/xcvrs/xcvr_io_9": "/[MCB_IOB_I2C_MASTER_28]",
-    "/run/devmap/xcvrs/xcvr_ctrl_9": "/[IOB_XCVR_CTRL_PORT_9]"
+    "/run/devmap/xcvrs/xcvr_io_9": "/[MCB_DOM_I2C_MASTER_9]",
+    "/run/devmap/xcvrs/xcvr_ctrl_9": "/[MCB_DOM_XCVR_CTRL_PORT_9]",
+    "/run/devmap/xcvrs/xcvr_io_10": "/[MCB_DOM_I2C_MASTER_10]",
+    "/run/devmap/xcvrs/xcvr_ctrl_10": "/[MCB_DOM_XCVR_CTRL_PORT_10]",
+    "/run/devmap/xcvrs/xcvr_io_11": "/[MCB_DOM_I2C_MASTER_11]",
+    "/run/devmap/xcvrs/xcvr_ctrl_11": "/[MCB_DOM_XCVR_CTRL_PORT_11]",
+    "/run/devmap/xcvrs/xcvr_io_12": "/[MCB_DOM_I2C_MASTER_12]",
+    "/run/devmap/xcvrs/xcvr_ctrl_12": "/[MCB_DOM_XCVR_CTRL_PORT_12]",
+    "/run/devmap/xcvrs/xcvr_io_13": "/[MCB_DOM_I2C_MASTER_13]",
+    "/run/devmap/xcvrs/xcvr_ctrl_13": "/[MCB_DOM_XCVR_CTRL_PORT_13]",
+    "/run/devmap/xcvrs/xcvr_io_14": "/[MCB_DOM_I2C_MASTER_14]",
+    "/run/devmap/xcvrs/xcvr_ctrl_14": "/[MCB_DOM_XCVR_CTRL_PORT_14]",
+    "/run/devmap/xcvrs/xcvr_io_15": "/[MCB_DOM_I2C_MASTER_15]",
+    "/run/devmap/xcvrs/xcvr_ctrl_15": "/[MCB_DOM_XCVR_CTRL_PORT_15]",
+    "/run/devmap/xcvrs/xcvr_io_16": "/[MCB_DOM_I2C_MASTER_16]",
+    "/run/devmap/xcvrs/xcvr_ctrl_16": "/[MCB_DOM_XCVR_CTRL_PORT_16]",
+    "/run/devmap/xcvrs/xcvr_io_17": "/[MCB_IOB_I2C_MASTER_27]",
+    "/run/devmap/xcvrs/xcvr_ctrl_17": "/[IOB_XCVR_CTRL_PORT_17]"
   },
   "chassisEepromDevicePath": "/[CHASSIS_EEPROM]",
-  "numXcvrs": 9,
+  "numXcvrs": 17,
   "bspKmodsRpmName": "fboss_bsp_kmods",
-  "bspKmodsRpmVersion": "4.2.0-1",
+  "bspKmodsRpmVersion": "4.4.0-1",
   "requiredKmodsToLoad": [
     "i2c_i801",
     "spidev",

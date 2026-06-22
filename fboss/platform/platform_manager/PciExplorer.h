@@ -88,6 +88,14 @@ class PciExplorer {
       const LedCtrlConfig& ledCtrlConfig,
       uint32_t instanceId);
 
+  // Create the Optical Module LED Controller based on the given
+  // FpgaIpBlockConfig residing at the given PciDevice path. Throw
+  // std::runtime_error on failure.
+  void createOMLedCtrl(
+      const PciDevice& pciDevice,
+      const FpgaIpBlockConfig& omLedCtrlConfig,
+      uint32_t instanceId);
+
   // Create the Transceiver block based on the given xcvrCtrlConfig residing
   // at the given PciDevice.
   // Return the SysfsPath. Throw std::runtime_error on failure.

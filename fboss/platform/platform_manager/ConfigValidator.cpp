@@ -247,23 +247,29 @@ bool ConfigValidator::isValidLedCtrlBlockConfig(
     XLOG(ERR) << "startPort must be a value greater than 0";
     return false;
   }
-  /*if (*ledCtrlBlockConfig.numPorts() > numXcvrs_) {
+  int16_t localNumXvcrs = 0;
+  if (virtualNumXcvrs_ > 0)
+    localNumXvcrs = virtualNumXcvrs_;
+  else
+    localNumXvcrs = numXcvrs_;
+
+  if (*ledCtrlBlockConfig.numPorts() > localNumXvcrs) {
     XLOG(ERR) << fmt::format(
-        "numPorts must be less than or equal to {}", numXcvrs_);
+        "numPorts must be less than or equal to {}", localNumXvcrs);
     return false;
   }
-  if (*ledCtrlBlockConfig.startPort() > numXcvrs_) {
+  if (*ledCtrlBlockConfig.startPort() > localNumXvcrs) {
     XLOG(ERR) << fmt::format(
-        "startPort must be less than or equal to {}", numXcvrs_);
+        "startPort must be less than or equal to {}", localNumXvcrs);
     return false;
   }
   if (*ledCtrlBlockConfig.startPort() + *ledCtrlBlockConfig.numPorts() - 1 >
-      numXcvrs_) {
+      localNumXvcrs) {
     XLOG(ERR) << fmt::format(
         "startPort + numPorts - 1 must be must be less than or equal to {}",
-        numXcvrs_);
+        localNumXvcrs);
     return false;
-  }*/
+  }
 
   for (int16_t port = *ledCtrlBlockConfig.startPort();
        port < *ledCtrlBlockConfig.startPort() + *ledCtrlBlockConfig.numPorts();
@@ -917,6 +923,46 @@ bool ConfigValidator::isValidPlatformWithoutPmOptics(
   return true;
 }
 
+int16_t ConfigValidator::getVirtualNumXcvrs(
+    const PlatformConfig& platformConfig) {
+  // const auto& platformName = *platformConfig.platformName();
+  int16_t virtualNumXcvrs = 0;
+  /*if(platformName != "ICEPHOTON")
+      return virtualNumXcvrs;*/
+
+  int16_t realNumXcvrs = 0;
+  constexpr int16_t kMaxSerdesLaneNum = 8;
+
+  for (const auto& [_, pmUnitConfig] : *platformConfig.pmUnitConfigs()) {
+    for (const auto& pciDev : *pmUnitConfig.pciDeviceConfigs()) {
+      for (const auto& block : *pciDev.xcvrCtrlBlockConfigs()) {
+        auto& portNum = block.numPorts().value();
+        realNumXcvrs += portNum;
+        if (block.lanesPerXcvr().has_value() &&
+            block.lanesPerXcvr().value() > 0) {
+          auto& lanesPerXcvr = block.lanesPerXcvr().value();
+          if (lanesPerXcvr % kMaxSerdesLaneNum == 0) {
+            virtualNumXcvrs += portNum * lanesPerXcvr / kMaxSerdesLaneNum;
+          } else {
+            virtualNumXcvrs += portNum;
+          }
+        } else {
+          virtualNumXcvrs += portNum;
+        }
+      }
+    }
+  }
+  if (realNumXcvrs != platformConfig.numXcvrs().value()) {
+    virtualNumXcvrs = 0;
+  }
+
+  XLOG(INFO) << fmt::format(
+      "virtualNumXcvrs = {}; numbXcvrs = {}",
+      virtualNumXcvrs,
+      platformConfig.numXcvrs().value());
+  return virtualNumXcvrs;
+}
+
 bool ConfigValidator::isValid(const PlatformConfig& config) {
   XLOG(INFO) << "Validating platform_manager config";
 
@@ -1014,6 +1060,8 @@ bool ConfigValidator::isValid(const PlatformConfig& config) {
       return false;
     }
   }
+
+  virtualNumXcvrs_ = getVirtualNumXcvrs(config);
 
   for (const auto& [pmUnitName, pmUnitConfig] : *config.pmUnitConfigs()) {
     XLOG(INFO) << fmt::format(

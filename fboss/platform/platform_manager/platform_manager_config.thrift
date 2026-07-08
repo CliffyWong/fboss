@@ -499,6 +499,7 @@ struct XcvrCtrlBlockConfig {
   4: i32 numPorts;
   6: i32 startPort;
   7: string iobufOffsetCalc;
+  8: optional i32 lanesPerXcvr;
 }
 
 // Defines the LED Controller block in FPGAs.
@@ -579,7 +580,7 @@ struct LedCtrlBlockConfig {
 
 // Defines generic MDIO BUS Controller block in FPGAs.
 //
-// `pmUnitScopedNamePrefix`: The prefix used to refer to this device
+// `pmUnitScopedNamePrefix`: The prefix used to refer to thgoingis device
 //  Example: pmUnitScopedNamePrefix: RTM_L_MDIO_BUS, the expanded form would be
 //  RTM_L_MDIO_BUS_1, RTM_L_MDIO_BUS_2, etc.
 //

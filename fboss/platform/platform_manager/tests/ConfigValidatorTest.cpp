@@ -1100,6 +1100,20 @@ TEST(ConfigValidatorTest, LedCtrlBlockConfig) {
   validator.numXcvrs_ = 32;
   EXPECT_FALSE(validator.isValidLedCtrlBlockConfig(config));
   config.startPort() = 1;
+
+  // Test case: Valid config with lanesPerXcvr more than 8 lanes
+  config.pmUnitScopedNamePrefix() = "MCB_LED";
+  config.deviceName() = "port_led";
+  config.csrOffsetCalc() =
+      "0x1000 + ({portNum} - {startPort})*0x100 + ({ledNum}-1)*0x10";
+  config.iobufOffsetCalc() =
+      "0x2000 + ({portNum} - {startPort})*0x100 + ({ledNum}-1)*0x10";
+  config.numPorts() = 32;
+  config.ledPerPort() = 2;
+  config.startPort() = 1;
+  validator.numXcvrs_ = 8;
+  validator.virtualNumXcvrs_ = 32;
+  EXPECT_TRUE(validator.isValidLedCtrlBlockConfig(config));
 }
 
 TEST(ConfigValidatorTest, LedCtrlBlockPortRanges) {

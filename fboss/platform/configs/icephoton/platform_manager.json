@@ -256,7 +256,8 @@
               "deviceName": "xcvr_ctrl",
               "csrOffsetCalc": "0x40200 + ({portNum} - {startPort})*0x4",
               "numPorts": 16,
-              "startPort": 1
+              "startPort": 1,
+              "lanesPerXcvr": 32
             },
             {
               "pmUnitScopedNamePrefix": "IOB",

@@ -127,4 +127,5 @@ struct FanServiceConfig {
   16: i16 pwmUpperThreshold;
   17: i16 pwmLowerThreshold;
   18: optional ShutdownCondition shutdownCondition;
+  19: bool isLiquidCoolingMode;
 }

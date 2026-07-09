@@ -1,0 +1,8 @@
+{
+
+  "controlInterval": {
+    "sensorReadInterval": 5
+  },
+
+  "isLiquidCoolingMode": true
+}

@@ -38,8 +38,31 @@ std::unordered_set<std::string> sensorPwmCalcTypes = {
 } // namespace
 
 namespace facebook::fboss::platform::fan_service {
+
+bool ConfigValidator::isValidLiquidCoolingModeConfig(
+    const FanServiceConfig& config) {
+  if (config.controlInterval()) {
+    if (*config.controlInterval()->sensorReadInterval() <= 0) {
+      XLOG(ERR) << "Invalid sensor read interval: "
+                << *config.controlInterval()->sensorReadInterval();
+      return false;
+    }
+  }
+  if (config.shutdownCondition()) {
+    if (config.shutdownCmd()->empty()) {
+      XLOG(ERR) << "shutdownCmd must be set when shutdownCondition is defined";
+      return false;
+    }
+  }
+  return true;
+}
+
 bool ConfigValidator::isValid(const FanServiceConfig& config) {
   XLOG(INFO) << "Validating fan_service config";
+  if (*config.isLiquidCoolingMode()) {
+    return isValidLiquidCoolingModeConfig(config);
+  }
+
   if (config.controlInterval()) {
     if (*config.controlInterval()->pwmUpdateInterval() <= 0) {
       XLOG(ERR) << "Invalid pwm update interval: "

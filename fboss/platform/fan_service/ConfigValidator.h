@@ -9,6 +9,7 @@ namespace facebook::fboss::platform::fan_service {
 class ConfigValidator {
  public:
   bool isValid(const FanServiceConfig& config);
+  bool isValidLiquidCoolingModeConfig(const FanServiceConfig& config);
   bool isValidFanConfig(const Fan& fanConfig);
   bool isValidOpticConfig(const Optic& opticConfig);
   bool isValidZoneConfig(

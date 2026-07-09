@@ -952,7 +952,8 @@ int16_t ConfigValidator::getVirtualNumXcvrs(
       }
     }
   }
-  if (realNumXcvrs != platformConfig.numXcvrs().value()) {
+  if (realNumXcvrs != platformConfig.numXcvrs().value() or
+      realNumXcvrs == virtualNumXcvrs) {
     virtualNumXcvrs = 0;
   }
 

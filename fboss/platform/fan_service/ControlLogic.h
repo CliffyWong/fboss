@@ -54,6 +54,7 @@ class ControlLogic {
   unsigned int getSensorFetchFrequency() const;
   void setFanHold(std::optional<int> pwm);
   std::optional<int> getFanHold();
+  void overtempDetect(std::shared_ptr<SensorData> pS);
 
  private:
   const FanServiceConfig config_;

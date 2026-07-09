@@ -578,6 +578,23 @@ void ControlLogic::setTransitionValue() {
   });
 }
 
+void ControlLogic::overtempDetect(std::shared_ptr<SensorData> pS) {
+  for (auto& sensorName : overtempWatchList_) {
+    auto sensorEntry = pS->getSensorEntry(sensorName);
+    if (sensorEntry) {
+      overtempCondition_.processSensorData(sensorName, sensorEntry->value);
+    }
+  }
+  if (overtempCondition_.checkIfOvertemp()) {
+    XLOG(ERR) << fmt::format("Running shutdown command");
+    structuredLogger_.logAlert(
+        "emergency_shutdown",
+        "System overtemp detected, running shutdown command",
+        {{}});
+    pBsp_->emergencyShutdown(true);
+  }
+}
+
 void ControlLogic::updateControl(std::shared_ptr<SensorData> pS) {
   int numFanFailed = 0;
 
@@ -649,7 +666,8 @@ void ControlLogic::updateControl(std::shared_ptr<SensorData> pS) {
   updateOpticsPwms(*pS);
 
   // STEP 3.5: Shutdown the system if overtemp is detected
-  for (auto& sensorName : overtempWatchList_) {
+  overtempDetect(pS);
+  /*for (auto& sensorName : overtempWatchList_) {
     auto sensorEntry = pS->getSensorEntry(sensorName);
     if (sensorEntry) {
       overtempCondition_.processSensorData(sensorName, sensorEntry->value);
@@ -662,7 +680,7 @@ void ControlLogic::updateControl(std::shared_ptr<SensorData> pS) {
         "System overtemp detected, running shutdown command",
         {{}});
     pBsp_->emergencyShutdown(true);
-  }
+  }*/
 
   // STEP 4: Determine whether boost mode is necessary
   auto lastQsfpSvcTime = pS->getLastQsfpSvcTime();

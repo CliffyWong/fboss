@@ -77,6 +77,12 @@ ControlLogic::ControlLogic(FanServiceConfig config, std::shared_ptr<Bsp> bsp)
     : config_(std::move(config)), structuredLogger_("fan_service"), pBsp_(bsp) {
   pSensorData_ = std::make_shared<SensorData>();
 
+  /*if (config_.isLiquidCoolingMode() == true) {
+    XLOG(INFO) << "Liquid cooling mode is enabled";
+    overtempWatchList_ = overtempCondition_.setupShutdownConditions(config_);
+  } else {*/
+  XLOG(INFO) << "Liquid cooling mode is disabled";
+
   setupPidLogics();
   overtempWatchList_ = overtempCondition_.setupShutdownConditions(config_);
 
@@ -84,6 +90,7 @@ ControlLogic::ControlLogic(FanServiceConfig config, std::shared_ptr<Bsp> bsp)
       << "Upon fan_service start up, program all fan pwm with transitional value of "
       << *config_.pwmTransitionValue();
   setTransitionValue();
+  //}
 }
 
 unsigned int ControlLogic::getControlFrequency() const {
@@ -134,6 +141,32 @@ bool ControlLogic::getAllTemperatureData() {
     XLOG(INFO) << "Successfully fetched all temperature data.";
   }
   return sensorReadOK && opticsReadOK && agentReadOK;
+}
+
+void ControlLogic::coolingControl() {
+  if (config_.isLiquidCoolingMode() == true) {
+    overtempControl();
+  } else {
+    controlFan();
+  }
+}
+
+void ControlLogic::overtempControl() {
+  uint64_t currentTimeSec = pBsp_->getCurrentTime();
+  bool temperatureFetchSuccessful = false;
+  // Update Sensor Value based according to fetch frequency
+  if ((currentTimeSec - lastSensorFetchTimeSec_) >= getSensorFetchFrequency()) {
+    temperatureFetchSuccessful = getAllTemperatureData();
+    if (temperatureFetchSuccessful) {
+      lastSensorFetchTimeSec_ = currentTimeSec;
+    }
+  }
+  // monitor overtemp condition according to control execution frequency
+  if ((currentTimeSec - lastControlExecutionTimeSec_) >=
+      getControlFrequency()) {
+    overtempDetect(pSensorData_);
+    lastControlExecutionTimeSec_ = currentTimeSec;
+  }
 }
 
 void ControlLogic::controlFan() {
@@ -579,6 +612,11 @@ void ControlLogic::setTransitionValue() {
 }
 
 void ControlLogic::overtempDetect(std::shared_ptr<SensorData> pS) {
+  if (!pBsp_->checkIfInitialSensorDataRead()) {
+    XLOG(INFO) << "Reading sensors for the first time";
+    pBsp_->getSensorData(pS);
+  }
+
   for (auto& sensorName : overtempWatchList_) {
     auto sensorEntry = pS->getSensorEntry(sensorName);
     if (sensorEntry) {

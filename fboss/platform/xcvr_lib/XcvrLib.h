@@ -85,9 +85,10 @@ class XcvrLib {
 
  private:
   bool isValidXcvrId(int xcvrId) const;
-
+  bool isNumLanesReadyForXcvr(int xcvrId) const;
   void validateXcvrInfos();
   void buildPerTransceiverLedCounts();
+  void initXcvrInfos();
 
   // Uncached computation backing getResetHoldHi(); may shell out for Arista.
   int computeResetHoldHi() const;

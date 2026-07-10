@@ -1,7 +1,8 @@
 {
 
   "controlInterval": {
-    "sensorReadInterval": 5
+    "sensorReadInterval": 5,
+    "pwmUpdateInterval": 5
   },
 
   "isLiquidCoolingMode": true

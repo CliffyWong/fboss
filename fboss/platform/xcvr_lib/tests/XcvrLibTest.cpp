@@ -21,6 +21,18 @@ makeLedBlock(int startPort, int numPorts, int ledPerPort, int lanesPerPort) {
   return block;
 }
 
+platform::platform_manager::XcvrCtrlBlockConfig
+makeXcvrBlock(int startPort, int numPorts, int lanesPerXcvr) {
+  platform::platform_manager::XcvrCtrlBlockConfig block;
+  block.startPort() = startPort;
+  block.numPorts() = numPorts;
+  if (lanesPerXcvr > 0) {
+    block.lanesPerXcvr() = lanesPerXcvr;
+  }
+
+  return block;
+}
+
 platform::platform_manager::PlatformConfig makeTestConfig(
     const std::string& platformName,
     int numXcvrs,
@@ -59,6 +71,30 @@ platform::platform_manager::PlatformConfig makeStandardTestConfig() {
        {"/run/devmap/xcvrs/xcvr_ctrl_3", "/dev/ctrl3"},
        {"/run/devmap/xcvrs/xcvr_io_4", "/dev/4"},
        {"/run/devmap/xcvrs/xcvr_ctrl_4", "/dev/ctrl4"}});
+}
+// CPO integrated transceiver test config:
+// 2 integrated transceivers, 1 tradional transceiver
+// Ports 1-8: 2 LEDs, 8 lanes each
+// Ports 9: 1 LED, 4 lanes each
+platform::platform_manager::PlatformConfig makeIntegratedXcvrTestConfig(
+    const std::vector<platform::platform_manager::XcvrCtrlBlockConfig>&
+        XcvrBlocks) {
+  auto testConfig = makeTestConfig(
+      "TEST_PLATFORM",
+      3,
+      {makeLedBlock(1, 8, 2, 8), makeLedBlock(9, 1, 1, 4)},
+      {{"/run/devmap/xcvrs/xcvr_io_1", "/dev/1"},
+       {"/run/devmap/xcvrs/xcvr_ctrl_1", "/dev/ctrl1"},
+       {"/run/devmap/xcvrs/xcvr_io_2", "/dev/2"},
+       {"/run/devmap/xcvrs/xcvr_ctrl_2", "/dev/ctrl2"},
+       {"/run/devmap/xcvrs/xcvr_ctrl_3", "/dev/ctrl3"}});
+
+  testConfig.pmUnitConfigs()
+      ->at("test_unit")
+      .pciDeviceConfigs()
+      ->at(0)
+      .xcvrCtrlBlockConfigs() = XcvrBlocks;
+  return testConfig;
 }
 
 // Fake host-state reader so getResetHoldHi() is hermetic (no rpm/uname shell).
@@ -110,6 +146,21 @@ TEST(XcvrLibTest, ConstructFromParsedSampleConfig) {
 TEST(XcvrLibTest, NumTransceivers) {
   XcvrLib xcvr(makeStandardTestConfig());
   EXPECT_EQ(xcvr.getNumTransceivers(), 4);
+}
+
+TEST(XcvrLibTest, IntegratedTransceivers) {
+  auto XcvrBlocks = {makeXcvrBlock(1, 2, 32), makeXcvrBlock(3, 1, 0)};
+  XcvrLib xcvr(makeIntegratedXcvrTestConfig(XcvrBlocks));
+  EXPECT_EQ(xcvr.getNumTransceivers(), 3);
+  EXPECT_EQ(xcvr.getNumLedsForTransceiver(1), 8);
+  EXPECT_EQ(xcvr.getNumLedsForTransceiver(2), 8);
+  EXPECT_EQ(xcvr.getNumLedsForTransceiver(3), 1);
+}
+
+TEST(XcvrLibTest, InvalidIntegratedTransceivers) {
+  auto XcvrBlocks = {makeXcvrBlock(1, 2, 28), makeXcvrBlock(3, 1, 0)};
+  EXPECT_THROW(
+      XcvrLib{makeIntegratedXcvrTestConfig(XcvrBlocks)}, std::runtime_error);
 }
 
 TEST(XcvrLibTest, GetXcvrIODevicePath) {

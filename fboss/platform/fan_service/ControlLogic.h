@@ -39,6 +39,8 @@ class ControlLogic {
     return sensorReadCaches_;
   }
 
+  void coolingControl();
+  void overtempControl();
   void controlFan();
   bool getAllTemperatureData();
   void getSensorDataThrift(std::shared_ptr<SensorData> pSensorData) const {

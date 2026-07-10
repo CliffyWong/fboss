@@ -67,7 +67,8 @@ XcvrLib::XcvrLib(
     : pmConfig_(pmConfig), systemInterface_(std::move(systemInterface)) {
   XCHECK(systemInterface_) << "XcvrLib requires a non-null SystemInterface";
   numXcvrs_ = *pmConfig_.numXcvrs();
-  xcvrInfos_.resize(numXcvrs_ + 1); // index 0 unused, 1..numXcvrs_
+  // xcvrInfos_.resize(numXcvrs_ + 1); // index 0 unused, 1..numXcvrs_
+  initXcvrInfos();
   buildPerTransceiverLedCounts();
   validateXcvrInfos();
 }
@@ -80,6 +81,14 @@ int XcvrLib::getNumTransceivers() const {
 
 bool XcvrLib::isValidXcvrId(int xcvrId) const {
   return xcvrId >= 1 && xcvrId <= numXcvrs_;
+}
+
+bool XcvrLib::isNumLanesReadyForXcvr(int xcvrId) const {
+  if (!isValidXcvrId(xcvrId)) {
+    return false;
+  }
+  return xcvrInfos_[xcvrId].numLanes.has_value() &&
+      xcvrInfos_[xcvrId].numLanes.value() > 0;
 }
 
 std::optional<int> XcvrLib::getNumLedsForTransceiver(int xcvrId) const {
@@ -255,8 +264,35 @@ void XcvrLib::validateXcvrInfos() {
   }
 }
 
+void XcvrLib::initXcvrInfos() {
+  xcvrInfos_.resize(numXcvrs_ + 1); // index 0 unused, 1..numXcvrs_
+  int xcvrindex = 1;
+  auto processXcvr = [&](const auto& pciDeviceConfigs) {
+    for (const auto& pciDevice : pciDeviceConfigs) {
+      for (const auto& block : *pciDevice.xcvrCtrlBlockConfigs()) {
+        auto& portNum = block.numPorts().value();
+        int lanesPerXcvr = 0;
+        if (block.lanesPerXcvr().has_value() &&
+            block.lanesPerXcvr().value() > 0) {
+          lanesPerXcvr = block.lanesPerXcvr().value();
+        }
+        for (int port = 0; port < portNum; ++port) {
+          if (isValidXcvrId(xcvrindex)) {
+            xcvrInfos_[xcvrindex].numLanes = lanesPerXcvr;
+          }
+          ++xcvrindex;
+        }
+      }
+    }
+  };
+  for (const auto& [pmUnitName, pmUnitConfig] : *pmConfig_.pmUnitConfigs()) {
+    processXcvr(*pmUnitConfig.pciDeviceConfigs());
+  }
+}
+
 void XcvrLib::buildPerTransceiverLedCounts() {
   // Helper lambda to process PCI device configs from a pmUnitConfig
+  int xcvrindex = 1;
   auto processPciDevices = [&](const auto& pciDeviceConfigs) {
     for (const auto& pciDevice : pciDeviceConfigs) {
       // Process ledCtrlBlockConfigs (current format)
@@ -265,10 +301,44 @@ void XcvrLib::buildPerTransceiverLedCounts() {
         int numPorts = *block.numPorts();
         int ledPerPort = *block.ledPerPort();
         int lanesPerPort = *block.lanesPerPort();
+        int localNumLanes = 0;
+        int localNumLeds = 0;
         for (int port = startPort; port < startPort + numPorts; ++port) {
-          if (isValidXcvrId(port)) {
-            xcvrInfos_[port].numLeds = ledPerPort;
-            xcvrInfos_[port].numLanes = lanesPerPort;
+          if (!isNumLanesReadyForXcvr(xcvrindex)) {
+            if (isValidXcvrId(xcvrindex)) {
+              xcvrInfos_[xcvrindex].numLeds = ledPerPort;
+              xcvrInfos_[xcvrindex].numLanes = lanesPerPort;
+              ++xcvrindex;
+            }
+          } else {
+            auto& readyNumLanes = xcvrInfos_[xcvrindex].numLanes.value();
+            if (localNumLanes < readyNumLanes) {
+              localNumLanes += lanesPerPort;
+              localNumLeds += ledPerPort;
+              if (localNumLanes == readyNumLanes) {
+                xcvrInfos_[xcvrindex].numLeds = localNumLeds;
+                ++xcvrindex;
+                localNumLeds = 0;
+                localNumLanes = 0;
+
+              } else if (localNumLanes > readyNumLanes) {
+                XLOG(ERR) << fmt::format(
+                    "Platform {}: xcvr {} has more lanes than expected "
+                    "(expected: {}, got: {})",
+                    *pmConfig_.platformName(),
+                    xcvrindex,
+                    readyNumLanes,
+                    localNumLanes);
+                throw std::runtime_error(
+                    fmt::format(
+                        "Platform {}: xcvr {} has more lanes than expected "
+                        "(expected: {}, got: {})",
+                        *pmConfig_.platformName(),
+                        xcvrindex,
+                        readyNumLanes,
+                        localNumLanes));
+              }
+            }
           }
         }
       }

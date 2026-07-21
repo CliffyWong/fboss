@@ -295,12 +295,14 @@ void PciExplorer::createLedCtrl(
   create(pciDevice, *ledCtrlConfig.fpgaIpBlockConfig(), auxData);
 }
 
-void PciExplorer::createOMLedCtrl(
+void PciExplorer::createElsfpLedCtrl(
     const PciDevice& pciDevice,
-    const FpgaIpBlockConfig& omLedCtrlonfig,
+    const LedCtrlConfig& omLedCtrlonfig,
     uint32_t instanceId) {
-  auto auxData = getAuxData(omLedCtrlonfig, instanceId);
-  create(pciDevice, omLedCtrlonfig, auxData);
+  auto auxData = getAuxData(*omLedCtrlonfig.fpgaIpBlockConfig(), instanceId);
+  auxData.led_data.led_idx = *omLedCtrlonfig.portNumber();
+  auxData.led_data.port_num = -1;
+  create(pciDevice, *omLedCtrlonfig.fpgaIpBlockConfig(), auxData);
 }
 
 std::string PciExplorer::createXcvrCtrl(

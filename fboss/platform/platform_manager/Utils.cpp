@@ -367,11 +367,32 @@ std::vector<LedCtrlConfig> Utils::createLedCtrlConfigs(
   return ledCtrlConfigs;
 }
 
-std::vector<FpgaIpBlockConfig> Utils::createOMLedCtrlConfigs(
+std::vector<LedCtrlConfig> Utils::createElsfpLedCtrlConfigs(
     const PciDeviceConfig& pciDeviceConfig) {
-  std::vector<FpgaIpBlockConfig> omLedCtrlConfigs;
+  std::vector<LedCtrlConfig> elsfpLedCtrlConfigs;
+  const auto elsfpLedCtrlBlockConfigs =
+      pciDeviceConfig.elsfpLedCtrlBlockConfigs();
 
-  return omLedCtrlConfigs;
+  for (const auto& ledCtrlBlockConfig : *elsfpLedCtrlBlockConfigs) {
+    int endPort =
+        *ledCtrlBlockConfig.startPort() + *ledCtrlBlockConfig.numPorts();
+    for (int port = *ledCtrlBlockConfig.startPort(); port < endPort; ++port) {
+      LedCtrlConfig ledCtrlConfig;
+      ledCtrlConfig.fpgaIpBlockConfig()->pmUnitScopedName() = fmt::format(
+          "{}_LED_{}", *ledCtrlBlockConfig.pmUnitScopedNamePrefix(), port);
+      ledCtrlConfig.fpgaIpBlockConfig()->deviceName() =
+          *ledCtrlBlockConfig.deviceName();
+      ledCtrlConfig.fpgaIpBlockConfig()->csrOffset() =
+          Utils().computeHexExpression(
+              *ledCtrlBlockConfig.csrOffsetCalc(),
+              port,
+              *ledCtrlBlockConfig.startPort());
+      ledCtrlConfig.portNumber() = port;
+      elsfpLedCtrlConfigs.push_back(ledCtrlConfig);
+    }
+  }
+
+  return elsfpLedCtrlConfigs;
 }
 
 std::vector<FpgaIpBlockConfig> Utils::createMdioBusConfigs(

@@ -83,6 +83,15 @@ class XcvrLib {
   // Returns the number of lanes for a specific transceiver
   std::optional<int> getNumLanesForTransceiver(int xcvrId) const;
 
+  // --- ELSFP LED path queries ---
+
+  // Returns the number of ELSFP LEDs
+  std::optional<int> getNumElsfpLeds() const;
+
+  // Returns e.g. "/sys/class/leds/port1_led1:blue:status"
+  std::optional<std::string> getElsfpLedSysfsPath(int xcvrId, LedColor color)
+      const;
+
  private:
   bool isValidXcvrId(int xcvrId) const;
   bool isNumLanesReadyForXcvr(int xcvrId) const;
@@ -97,6 +106,8 @@ class XcvrLib {
     std::optional<int> numLeds;
     std::optional<int> numLanes;
   };
+
+  std::string getLedColorStr(LedColor color) const;
 
   platform::platform_manager::PlatformConfig pmConfig_;
   std::shared_ptr<platform::platform_manager::package_manager::SystemInterface>

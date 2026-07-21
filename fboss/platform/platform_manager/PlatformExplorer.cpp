@@ -755,6 +755,13 @@ void PlatformExplorer::explorePciDevices(
         });
     createPciSubDevices(
         slotPath,
+        Utils::createElsfpLedCtrlConfigs(pciDeviceConfig),
+        ExplorationErrorType::PCI_SUB_DEVICE_CREATE_LED_CTRL,
+        [&](const auto& ledCtrlConfig) {
+          pciExplorer_.createElsfpLedCtrl(pciDevice, ledCtrlConfig, instId++);
+        });
+    createPciSubDevices(
+        slotPath,
         Utils::createXcvrCtrlConfigs(pciDeviceConfig),
         ExplorationErrorType::PCI_SUB_DEVICE_CREATE_XCVR_CTRL,
         [&](const auto& xcvrCtrlConfig) {

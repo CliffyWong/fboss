@@ -12,5 +12,27 @@
       "presentLedSysfsPath": "/sys/class/leds/smb_led:blue:status/brightness",
       "absentLedSysfsPath": "/sys/class/leds/smb_led:amber:status/brightness"
     }
-  }
+  },
+  "fruConfigs": [
+    {
+      "fruName": "PWR",
+      "fruType": "PWR",
+      "presenceDetection": {
+        "sysfsFileHandle": {
+          "presenceFilePath": "/run/devmap/cplds/MCB_CPLD/hs_48v_pg",
+          "desiredValue": 1
+        }
+      }
+    },
+    {
+      "fruName": "SMB",
+      "fruType": "SMB",
+      "presenceDetection": {
+        "sysfsFileHandle": {
+          "presenceFilePath": "/run/devmap/cplds/MCB_CPLD/smb_present",
+          "desiredValue": 1
+        }
+      }
+    }
+  ]
 }

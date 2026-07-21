@@ -1116,6 +1116,71 @@ TEST(ConfigValidatorTest, LedCtrlBlockConfig) {
   EXPECT_TRUE(validator.isValidLedCtrlBlockConfig(config));
 }
 
+TEST(ConfigValidatorTest, ElsfpLedCtrlBlockConfig) {
+  ConfigValidator validator;
+  LedCtrlBlockConfig config;
+
+  // Test case: Valid config
+  config.pmUnitScopedNamePrefix() = "MCB_ELSFP";
+  config.deviceName() = "elsfp_led";
+  config.csrOffsetCalc() = "0x1000 + ({portNum} - {startPort})*0x100";
+  config.numPorts() = 16;
+  config.startPort() = 1;
+  validator.numXcvrs_ = 17;
+  EXPECT_TRUE(validator.isValidElsfpLedCtrlBlockConfig(config));
+
+  // Test case: Empty pmUnitScopedNamePrefix
+  config.pmUnitScopedNamePrefix() = "";
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.pmUnitScopedNamePrefix() = "MCB_ELSFP";
+
+  // Test case: pmUnitScopedNamePrefix ends with _
+  config.pmUnitScopedNamePrefix() = "MCB_ELSFP_";
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.pmUnitScopedNamePrefix() = "MCB_ELSFP";
+
+  // Test case: Empty deviceName
+  config.deviceName() = "";
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.deviceName() = "elsfp_led";
+
+  // Test case: Empty csrOffsetCalc
+  config.csrOffsetCalc() = "";
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.csrOffsetCalc() = "0x1000 + ({portNum} - {startPort})*0x100";
+
+  // Test case: Zero numPorts
+  config.numPorts() = 0;
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+
+  // Test case: Negative numPorts
+  config.numPorts() = -1;
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.numPorts() = 16;
+
+  // Test case: Negative startPort
+  config.startPort() = -1;
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.startPort() = 0;
+
+  // Test case: Zero startPort
+  config.startPort() = 0;
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+  config.startPort() = 1;
+
+  // Test case: More ports than numXcvrs
+  config.numPorts() = 64;
+  config.startPort() = 10;
+  validator.numXcvrs_ = 64;
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+
+  // Test case: startNum greater than numXcvrs
+  config.numPorts() = 32;
+  config.startPort() = 33;
+  validator.numXcvrs_ = 32;
+  EXPECT_FALSE(validator.isValidElsfpLedCtrlBlockConfig(config));
+}
+
 TEST(ConfigValidatorTest, LedCtrlBlockPortRanges) {
   ConfigValidator validator;
   std::vector<LedCtrlBlockConfig> configs;

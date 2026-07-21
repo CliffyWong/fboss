@@ -218,14 +218,14 @@ XcvrLib::getLedSysfsPath(int xcvrId, int ledNumForXcvr, LedColor color) const {
         numLeds.value_or(0));
     return std::nullopt;
   }
-  const char* colorStr = (color == LedColor::BLUE) ? "blue"
+  /*const char* colorStr = (color == LedColor::BLUE) ? "blue"
       : (color == LedColor::GREEN)                 ? "green"
-                                                   : "amber";
+                                                   : "amber";*/
   return fmt::format(
       "/sys/class/leds/port{}_led{}:{}:status",
       xcvrId,
       ledNumForXcvr,
-      colorStr);
+      getLedColorStr(color));
 }
 
 // --- Lane mapping ---
@@ -241,7 +241,47 @@ std::optional<int> XcvrLib::getNumLanesForTransceiver(int xcvrId) const {
   return xcvrInfos_[xcvrId].numLanes;
 }
 
+// --- ELSFP LED path queries ---
+
+std::optional<int> XcvrLib::getNumElsfpLeds() const {
+  int numElsfpLeds = 0;
+  auto processElsfpLed = [&](const auto& pciDeviceConfigs) {
+    for (const auto& pciDevice : pciDeviceConfigs) {
+      for (const auto& block : *pciDevice.elsfpLedCtrlBlockConfigs()) {
+        numElsfpLeds += block.numPorts().value();
+      }
+    }
+  };
+  for (const auto& [pmUnitName, pmUnitConfig] : *pmConfig_.pmUnitConfigs()) {
+    processElsfpLed(*pmUnitConfig.pciDeviceConfigs());
+  }
+  if (numElsfpLeds > 0) {
+    return std::optional<int>(numElsfpLeds);
+  }
+  return std::nullopt;
+}
+
+std::optional<std::string> XcvrLib::getElsfpLedSysfsPath(
+    int xcvrId,
+    LedColor color) const {
+  if (!isValidXcvrId(xcvrId)) {
+    XLOG(ERR) << fmt::format(
+        "Invalid xcvrId {} for getElsfpLedSysfsPath (valid: 1-{})",
+        xcvrId,
+        numXcvrs_);
+    return std::nullopt;
+  }
+  return fmt::format(
+      "/sys/class/leds/elsfp_led{}:{}:status", xcvrId, getLedColorStr(color));
+}
+
 // --- Private helpers ---
+std::string XcvrLib::getLedColorStr(LedColor color) const {
+  const char* colorStr = (color == LedColor::BLUE) ? "blue"
+      : (color == LedColor::GREEN)                 ? "green"
+                                                   : "amber";
+  return colorStr;
+}
 
 void XcvrLib::validateXcvrInfos() {
   const auto& platformName = *pmConfig_.platformName();

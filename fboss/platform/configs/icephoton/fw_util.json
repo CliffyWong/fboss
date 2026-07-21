@@ -86,11 +86,11 @@
     "dom_fpga": {
       "preUpgrade": [
         {
-          "commandType": "gpioset",
-          "gpiosetArgs": {
-            "gpioChip": "fboss_iob_pci.gpiochip.*",
-            "gpioChipValue": "1",
-            "gpioChipPin": "9"
+          "commandType": "writeToPort",
+          "writeToPortArgs": {
+            "hexByteValue": "0x02",
+            "portFile": "/run/dev/cplds/SMB_CPLD/spi_switch",
+            "hexOffset": "0x0"
           }
         }
       ],
@@ -99,7 +99,7 @@
           "commandType": "flashrom",
           "flashromArgs": {
             "programmer_type": "linux_spi:dev=",
-            "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_2_DEVICE_1",
+            "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_5_DEVICE_1",
             "chip": [
               "N25Q128..3E",
               "W25Q128.V..M"
@@ -109,10 +109,11 @@
       ],
       "postUpgrade": [
         {
-          "commandType": "gpioget",
-          "gpiogetArgs": {
-            "gpioChip": "fboss_iob_pci.gpiochip.*",
-            "gpioChipPin": "9"
+          "commandType": "writeToPort",
+          "writeToPortArgs": {
+            "hexByteValue": "0x00",
+            "portFile": "/run/dev/cplds/SMB_CPLD/spi_switch",
+            "hexOffset": "0x00"
           }
         }
       ],
@@ -209,9 +210,17 @@
           "gpiosetArgs": {
             "gpioChip": "fboss_iob_pci.gpiochip.*",
             "gpioChipValue": "1",
-            "gpioChipPin": "7"
+            "gpioChipPin": "66"
           }
-        }
+        },
+        {
+          "commandType": "gpioset",
+          "gpiosetArgs": {
+            "gpioChip": "fboss_iob_pci.gpiochip.*",
+            "gpioChipValue": "0",
+            "gpioChipPin": "9"
+          }
+        }        
       ],
       "upgrade": [
         {
@@ -230,7 +239,7 @@
           "commandType": "gpioget",
           "gpiogetArgs": {
             "gpioChip": "fboss_iob_pci.gpiochip.*",
-            "gpioChipPin": "7"
+            "gpioChipPin": "66"
           }
         }
       ],
@@ -321,11 +330,11 @@
     "oe_cpld": {
       "preUpgrade": [
         {
-          "commandType": "gpioset",
-          "gpiosetArgs": {
-            "gpioChip": "fboss_iob_pci.gpiochip.*",
-            "gpioChipValue": "1",
-            "gpioChipPin": "1"
+          "commandType": "writeToPort",
+          "writeToPortArgs": {
+            "hexByteValue": "0x01",
+            "portFile": "/run/dev/cplds/SMB_CPLD/spi_switch",
+            "hexOffset": "0x0"
           }
         }
       ],
@@ -334,7 +343,7 @@
           "commandType": "flashrom",
           "flashromArgs": {
             "programmer_type": "linux_spi:dev=",
-            "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_7_DEVICE_1",
+            "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_5_DEVICE_1",
             "chip": [
               "W25X20"
             ]
@@ -343,10 +352,11 @@
       ],
       "postUpgrade": [
         {
-          "commandType": "gpioget",
-          "gpiogetArgs": {
-            "gpioChip": "fboss_iob_pci.gpiochip.*",
-            "gpioChipPin": "1"
+          "commandType": "writeToPort",
+          "writeToPortArgs": {
+            "hexByteValue": "0x00",
+            "portFile": "/run/dev/cplds/SMB_CPLD/spi_switch",
+            "hexOffset": "0x00"
           }
         }
       ],
@@ -354,7 +364,7 @@
         "commandType": "flashrom",
         "flashromArgs": {
           "programmer_type": "linux_spi:dev=",
-          "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_7_DEVICE_1",
+          "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_5_DEVICE_1",
           "chip": [
             "W25X20"
           ]
@@ -364,7 +374,7 @@
         "commandType": "flashrom",
         "flashromArgs": {
           "programmer_type": "linux_spi:dev=",
-          "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_7_DEVICE_1",
+          "programmer": "/run/devmap/flashes/MCB_SPI_MASTER_5_DEVICE_1",
           "chip": [
             "W25X20"
           ]
@@ -372,7 +382,7 @@
       },
       "version": {
         "versionType": "sysfs",
-        "path": "/run/devmap/cplds/SCM_CPLD/fw_ver"
+        "path": "/run/devmap/cplds/OE_CPLD/fw_ver"
       },
       "priority": 6
     }

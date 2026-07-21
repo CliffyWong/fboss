@@ -78,7 +78,9 @@ platform::platform_manager::PlatformConfig makeStandardTestConfig() {
 // Ports 9: 1 LED, 4 lanes each
 platform::platform_manager::PlatformConfig makeIntegratedXcvrTestConfig(
     const std::vector<platform::platform_manager::XcvrCtrlBlockConfig>&
-        XcvrBlocks) {
+        XcvrBlocks,
+    const std::vector<platform::platform_manager::LedCtrlBlockConfig>&
+        elsfpLedBlocks = {}) {
   auto testConfig = makeTestConfig(
       "TEST_PLATFORM",
       3,
@@ -94,6 +96,13 @@ platform::platform_manager::PlatformConfig makeIntegratedXcvrTestConfig(
       .pciDeviceConfigs()
       ->at(0)
       .xcvrCtrlBlockConfigs() = XcvrBlocks;
+
+  testConfig.pmUnitConfigs()
+      ->at("test_unit")
+      .pciDeviceConfigs()
+      ->at(0)
+      .elsfpLedCtrlBlockConfigs() = elsfpLedBlocks;
+
   return testConfig;
 }
 
@@ -387,4 +396,49 @@ TEST(XcvrLibTest, GetLedSysfsPathInvalidLedNum) {
   // Port 1 has 2 LEDs, so ledNum 0 and 3 are invalid
   EXPECT_EQ(xcvr.getLedSysfsPath(1, 0, XcvrLib::LedColor::BLUE), std::nullopt);
   EXPECT_EQ(xcvr.getLedSysfsPath(1, 3, XcvrLib::LedColor::BLUE), std::nullopt);
+}
+
+TEST(XcvrLibTest, GetElsfpLedInvalidNum) {
+  XcvrLib xcvr(makeStandardTestConfig());
+  // There is no ELSPF LED config
+  EXPECT_EQ(xcvr.getNumElsfpLeds(), std::nullopt);
+}
+
+TEST(XcvrLibTest, GetElsfpLedNum) {
+  auto XcvrBlocks = {makeXcvrBlock(1, 2, 32), makeXcvrBlock(3, 1, 0)};
+  auto elsfpLedBlocks = {makeLedBlock(1, 2, 0, 0)};
+
+  XcvrLib xcvr(makeIntegratedXcvrTestConfig(XcvrBlocks, elsfpLedBlocks));
+  // There are 2 ELSPF LED in config
+  EXPECT_EQ(xcvr.getNumElsfpLeds(), 2);
+}
+
+TEST(XcvrLibTest, GetElsfpLedSysfsPathInvalidXcvrId) {
+  auto XcvrBlocks = {makeXcvrBlock(1, 2, 32), makeXcvrBlock(3, 1, 0)};
+  auto elsfpLedBlocks = {makeLedBlock(1, 2, 0, 0)};
+
+  XcvrLib xcvr(makeIntegratedXcvrTestConfig(XcvrBlocks, elsfpLedBlocks));
+  EXPECT_EQ(
+      xcvr.getElsfpLedSysfsPath(0, XcvrLib::LedColor::BLUE), std::nullopt);
+  EXPECT_EQ(
+      xcvr.getElsfpLedSysfsPath(4, XcvrLib::LedColor::BLUE), std::nullopt);
+}
+
+TEST(XcvrLibTest, GetElsfpLedSysfsPath) {
+  auto XcvrBlocks = {makeXcvrBlock(1, 2, 32), makeXcvrBlock(3, 1, 0)};
+  auto elsfpLedBlocks = {makeLedBlock(1, 2, 0, 0)};
+
+  XcvrLib xcvr(makeIntegratedXcvrTestConfig(XcvrBlocks, elsfpLedBlocks));
+  EXPECT_EQ(
+      xcvr.getElsfpLedSysfsPath(1, XcvrLib::LedColor::BLUE),
+      "/sys/class/leds/elsfp_led1:blue:status");
+  EXPECT_EQ(
+      xcvr.getElsfpLedSysfsPath(2, XcvrLib::LedColor::BLUE),
+      "/sys/class/leds/elsfp_led2:blue:status");
+  EXPECT_EQ(
+      xcvr.getElsfpLedSysfsPath(1, XcvrLib::LedColor::AMBER),
+      "/sys/class/leds/elsfp_led1:amber:status");
+  EXPECT_EQ(
+      xcvr.getElsfpLedSysfsPath(2, XcvrLib::LedColor::GREEN),
+      "/sys/class/leds/elsfp_led2:green:status");
 }

@@ -298,6 +298,70 @@ bool ConfigValidator::isValidLedCtrlBlockConfig(
   return true;
 }
 
+bool ConfigValidator::isValidElsfpLedCtrlBlockConfig(
+    const LedCtrlBlockConfig& ledCtrlBlockConfig) {
+  if (ledCtrlBlockConfig.pmUnitScopedNamePrefix()->empty()) {
+    XLOG(ERR) << "PmUnitScopedNamePrefix must be a non-empty string";
+    return false;
+  }
+  if (ledCtrlBlockConfig.pmUnitScopedNamePrefix()->ends_with('_')) {
+    XLOG(ERR) << "PmUnitScopedNamePrefix must not end with an underscore";
+    return false;
+  }
+  if (ledCtrlBlockConfig.deviceName()->empty()) {
+    XLOG(ERR) << "deviceName must be a non-empty string";
+    return false;
+  }
+  if (ledCtrlBlockConfig.csrOffsetCalc()->empty()) {
+    XLOG(ERR) << "csrOffsetCalc must be a non-empty string";
+    return false;
+  }
+  if (*ledCtrlBlockConfig.numPorts() <= 0) {
+    XLOG(ERR) << "numPorts must be a value greater than 0";
+    return false;
+  }
+  if (*ledCtrlBlockConfig.ledPerPort() != 0) {
+    XLOG(ERR) << "ledPerPort must be 0";
+    return false;
+  }
+
+  if (*ledCtrlBlockConfig.startPort() <= 0) {
+    XLOG(ERR) << "startPort must be a value greater than 0";
+    return false;
+  }
+
+  if (*ledCtrlBlockConfig.numPorts() > numXcvrs_) {
+    XLOG(ERR) << fmt::format(
+        "numPorts must be less than or equal to {}", numXcvrs_);
+    return false;
+  }
+  if (*ledCtrlBlockConfig.startPort() > numXcvrs_) {
+    XLOG(ERR) << fmt::format(
+        "startPort must be less than or equal to {}", numXcvrs_);
+    return false;
+  }
+  if (*ledCtrlBlockConfig.startPort() + *ledCtrlBlockConfig.numPorts() - 1 >
+      numXcvrs_) {
+    XLOG(ERR) << fmt::format(
+        "startPort + numPorts - 1 must be must be less than or equal to {}",
+        numXcvrs_);
+    return false;
+  }
+
+  for (int16_t port = *ledCtrlBlockConfig.startPort();
+       port < *ledCtrlBlockConfig.startPort() + *ledCtrlBlockConfig.numPorts();
+       port++) {
+    if (!isValidCsrOffsetCalc(
+            *ledCtrlBlockConfig.csrOffsetCalc(),
+            port,
+            *ledCtrlBlockConfig.startPort())) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 bool ConfigValidator::isValidXcvrCtrlBlockConfig(
     const XcvrCtrlBlockConfig& xcvrCtrlBlockConfig) {
   if (xcvrCtrlBlockConfig.pmUnitScopedNamePrefix()->empty()) {
@@ -574,6 +638,12 @@ bool ConfigValidator::isValidPciDeviceConfig(
 
   for (const auto& config : *pciDeviceConfig.ledCtrlBlockConfigs()) {
     if (!isValidLedCtrlBlockConfig(config)) {
+      return false;
+    }
+  }
+
+  for (const auto& config : *pciDeviceConfig.elsfpLedCtrlBlockConfigs()) {
+    if (!isValidElsfpLedCtrlBlockConfig(config)) {
       return false;
     }
   }

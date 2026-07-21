@@ -277,6 +277,30 @@ TEST(UtilsTest, CreateLedCtrlConfigs) {
   EXPECT_TRUE(configs[0].fpgaIpBlockConfig()->iobufOffset()->empty());
 }
 
+TEST(UtilsTest, CreateElsfpLedCtrlConfigs) {
+  PciDeviceConfig pciDeviceConfig;
+  pciDeviceConfig.elsfpLedCtrlBlockConfigs() = {};
+  EXPECT_TRUE(Utils::createElsfpLedCtrlConfigs(pciDeviceConfig).empty());
+
+  LedCtrlBlockConfig ledBlock;
+  ledBlock.pmUnitScopedNamePrefix() = "TEST_ELSFP";
+  ledBlock.deviceName() = "elspf_led";
+  ledBlock.csrOffsetCalc() = "0x40800 + ({portNum} - {startPort})*0x4";
+  ledBlock.numPorts() = 4;
+  ledBlock.startPort() = 1;
+  pciDeviceConfig.elsfpLedCtrlBlockConfigs() = {ledBlock};
+
+  auto configs = Utils::createElsfpLedCtrlConfigs(pciDeviceConfig);
+  EXPECT_EQ(4, configs.size());
+  EXPECT_EQ(
+      "TEST_ELSFP_LED_1", *configs[0].fpgaIpBlockConfig()->pmUnitScopedName());
+  EXPECT_EQ("0x40800", *configs[0].fpgaIpBlockConfig()->csrOffset());
+  EXPECT_EQ(1, *configs[0].portNumber());
+
+  EXPECT_EQ("0x4080c", *configs[3].fpgaIpBlockConfig()->csrOffset());
+  EXPECT_EQ(4, *configs[3].portNumber());
+}
+
 TEST(UtilsTest, CreateMdioBusConfigs) {
   PciDeviceConfig pciDeviceConfig;
   pciDeviceConfig.mdioBusBlockConfigs() = {};

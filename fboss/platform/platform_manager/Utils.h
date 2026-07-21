@@ -81,10 +81,10 @@ class Utils {
   static std::vector<LedCtrlConfig> createLedCtrlConfigs(
       const PciDeviceConfig& pciDeviceConfig);
 
-  // Create the Optical Module LED Controller Config block based on the given
+  // Create the ELSFP LED Controller Config block based on the given
   // omLedCtrlConfig residing at the given PciDevice. Throw std::runtime_error
   // on failure.
-  static std::vector<FpgaIpBlockConfig> createOMLedCtrlConfigs(
+  static std::vector<LedCtrlConfig> createElsfpLedCtrlConfigs(
       const PciDeviceConfig& pciDeviceConfig);
 
   // Create the MDIO BUS Controller Config block residing at the given

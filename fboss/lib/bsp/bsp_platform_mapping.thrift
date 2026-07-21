@@ -19,6 +19,11 @@ struct BspPimMapping {
   // Map of controller ID to controller info
   4: map<i32, BspPhyIOControllerInfo> phyIOControllers;
   5: map<i32, led_mapping.LedMapping> ledMapping;
+  // CPO (co-packaged optics) platforms have a dedicated set of LEDs for the
+  // ELSFPs (External Laser Small Form-factor Pluggables) in addition to the
+  // front panel LEDs in ledMapping above. There is a 1:1 mapping between an
+  // ELSFP and its LED, so this is keyed by ELSFP id.
+  6: map<i32, led_mapping.LedMapping> elsfpLedMapping;
 }
 
 struct BspPhyMapping {
